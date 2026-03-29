@@ -39,142 +39,230 @@ from src.recourse.generic_recourse_mip import solve_recourse_mip
 
 st.set_page_config(
     page_title="FCAR — Fairness Constrained Actionable Recourse",
-    page_icon="⚖️",
+    page_icon="\u2696",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Premium CSS
+# CSS
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+st.markdown(
+    '<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">',
+    unsafe_allow_html=True,
+)
 
 st.markdown("""
 <style>
-/* ─── Google Font import ─── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
-/* ─── Root variables ─── */
-:root {
-    --bg-primary: #0a0e1a;
-    --bg-secondary: #111827;
-    --bg-card: rgba(17, 24, 39, 0.7);
-    --bg-glass: rgba(255, 255, 255, 0.03);
-    --border-subtle: rgba(255, 255, 255, 0.06);
-    --border-accent: rgba(99, 102, 241, 0.3);
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --accent-indigo: #6366f1;
-    --accent-violet: #8b5cf6;
-    --accent-emerald: #10b981;
-    --accent-rose: #f43f5e;
-    --accent-amber: #f59e0b;
-    --accent-cyan: #06b6d4;
-    --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
-    --gradient-success: linear-gradient(135deg, #059669 0%, #10b981 100%);
-    --gradient-danger: linear-gradient(135deg, #dc2626 0%, #f43f5e 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-    --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
+/* ─── Force Poppins everywhere ─── */
+*, html, body,
+[data-testid="stAppViewContainer"],
+[data-testid="stSidebar"],
+[data-testid="stHeader"],
+.stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown li, .stMarkdown td, .stMarkdown th,
+button, input, select, textarea,
+h1, h2, h3, h4, h5, h6,
+label, .stRadio label, .stSelectbox label,
+div, span, a, p, td, th {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
 }
 
-/* ─── Global ─── */
-html, body, [data-testid="stAppViewContainer"] {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    background: var(--bg-primary) !important;
-    color: var(--text-primary) !important;
+/* ─── Color Palette ─── */
+:root {
+    --navy: #0c4466;
+    --navy-light: #0e5a85;
+    --teal: #14b8a6;
+    --teal-light: #5eead4;
+    --bg: #ffffff;
+    --bg-alt: #f8fafc;
+    --border: #e2e8f0;
+    --text: #0c4466;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --green: #059669;
+    --red: #dc2626;
+    --amber: #d97706;
+    --radius: 10px;
+}
+
+/* ─── Background ─── */
+[data-testid="stAppViewContainer"] {
+    background: var(--bg) !important;
 }
 .main .block-container {
     padding: 2rem 3rem !important;
     max-width: 1400px;
 }
+[data-testid="stHeader"] {
+    background: transparent !important;
+}
 
 /* ─── Sidebar ─── */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%) !important;
-    border-right: 1px solid var(--border-subtle) !important;
-}
-[data-testid="stSidebar"] * {
-    color: var(--text-secondary) !important;
-    font-family: 'Inter', sans-serif !important;
-}
-[data-testid="stSidebar"] h1,
-[data-testid="stSidebar"] h2,
-[data-testid="stSidebar"] h3 {
-    color: var(--text-primary) !important;
+    background: var(--bg) !important;
+    border-right: 1px solid var(--border) !important;
 }
 [data-testid="stSidebar"] hr {
-    border-color: rgba(255,255,255,0.08) !important;
+    border-color: var(--border) !important;
+    margin: 1rem 0 !important;
 }
-[data-testid="stSidebar"] .stRadio label {
-    padding: 8px 12px !important;
-    border-radius: var(--radius-sm) !important;
-    transition: all 0.2s ease !important;
+
+/* ─── Sidebar nav radio ─── */
+[data-testid="stSidebar"] .stRadio > div[role="radiogroup"] {
+    gap: 2px !important;
 }
-[data-testid="stSidebar"] .stRadio label:hover {
-    background: rgba(99, 102, 241, 0.1) !important;
+[data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label {
+    display: flex !important;
+    align-items: center !important;
+    padding: 10px 16px !important;
+    border-radius: 8px !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    transition: background 0.15s ease !important;
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    border: none !important;
+    background: transparent !important;
+}
+[data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label:hover {
+    background: var(--bg-alt) !important;
+}
+/* Hide radio circle */
+[data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label > div:first-child {
+    display: none !important;
+}
+/* Selected state */
+[data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label[data-checked="true"],
+[data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label:has(input:checked) {
+    background: rgba(12, 68, 102, 0.08) !important;
+    color: var(--navy) !important;
+    font-weight: 600 !important;
+}
+/* Hide radio label header */
+[data-testid="stSidebar"] .stRadio > label {
+    display: none !important;
 }
 
 /* ─── Headers ─── */
-h1, h2, h3 {
-    font-family: 'Inter', sans-serif !important;
-    color: var(--text-primary) !important;
-    letter-spacing: -0.02em;
+h1 { color: var(--navy) !important; font-weight: 700 !important; }
+h2 { color: var(--navy) !important; font-weight: 600 !important; }
+h3 { color: var(--navy) !important; font-weight: 600 !important; }
+
+/* ─── Buttons ─── */
+.stButton > button {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
 }
-h1 { font-weight: 800 !important; }
+.stButton > button[kind="primary"],
+.stButton > button[data-testid="stBaseButton-primary"] {
+    background: var(--navy) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 10px 24px !important;
+}
+.stButton > button[kind="primary"]:hover,
+.stButton > button[data-testid="stBaseButton-primary"]:hover {
+    background: var(--navy-light) !important;
+    color: #ffffff !important;
+}
+.stButton > button[kind="secondary"],
+.stButton > button[data-testid="stBaseButton-secondary"] {
+    background: transparent !important;
+    color: var(--navy) !important;
+    border: 1px solid var(--border) !important;
+}
+.stButton > button[kind="secondary"]:hover,
+.stButton > button[data-testid="stBaseButton-secondary"]:hover {
+    border-color: var(--navy) !important;
+    background: rgba(12, 68, 102, 0.04) !important;
+}
+
+/* ─── Selectbox / Inputs ─── */
+.stSelectbox > div > div,
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input {
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    background: var(--bg) !important;
+    color: var(--text) !important;
+}
+
+/* ─── Toggle ─── */
+[data-testid="stSwitchWidget"] span[data-checked="true"] {
+    background-color: var(--navy) !important;
+}
+
+/* ─── Tabs ─── */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 0px;
+    border-bottom: 2px solid var(--border);
+    background: transparent;
+}
+.stTabs [data-baseweb="tab"] {
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    padding: 10px 20px !important;
+    border-bottom: 2px solid transparent !important;
+    background: transparent !important;
+}
+.stTabs [aria-selected="true"] {
+    color: var(--navy) !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid var(--navy) !important;
+    background: transparent !important;
+}
+
+/* ─── DataFrame ─── */
+.stDataFrame {
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+}
+
+/* ─── Links ─── */
+.stMarkdown a { color: var(--navy) !important; }
+
+/* ─── Metrics ─── */
+[data-testid="stMetricValue"] {
+    color: var(--navy) !important;
+    font-weight: 700 !important;
+}
 
 /* ─── Glass Card ─── */
 .glass-card {
-    background: var(--gradient-glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 24px;
     margin-bottom: 16px;
-    transition: all 0.3s ease;
-}
-.glass-card:hover {
-    border-color: var(--border-accent);
-    box-shadow: var(--shadow-glow);
 }
 
-/* ─── KPI Cards ─── */
+/* ─── KPI Card ─── */
 .kpi-card {
-    background: var(--gradient-glass);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 24px 20px;
     text-align: center;
     position: relative;
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .kpi-card::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 3px;
-    background: var(--gradient-primary);
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: linear-gradient(135deg, var(--navy), var(--teal));
 }
-.kpi-card.green::before  { background: var(--gradient-success); }
-.kpi-card.red::before    { background: var(--gradient-danger); }
-.kpi-card.orange::before { background: linear-gradient(135deg, #d97706, #f59e0b); }
-.kpi-card.purple::before { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
-.kpi-card.cyan::before   { background: linear-gradient(135deg, #0891b2, #06b6d4); }
-.kpi-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--border-accent);
-    box-shadow: var(--shadow-glow);
-}
+.kpi-card.green::before  { background: var(--green); }
+.kpi-card.red::before    { background: var(--red); }
+.kpi-card.orange::before { background: var(--amber); }
+.kpi-card.purple::before { background: #7c3aed; }
+.kpi-card.cyan::before   { background: var(--teal); }
 .kpi-label {
     font-size: 11px;
     font-weight: 600;
@@ -185,10 +273,9 @@ h1 { font-weight: 800 !important; }
 }
 .kpi-value {
     font-size: 28px;
-    font-weight: 800;
-    color: var(--text-primary);
+    font-weight: 700;
+    color: var(--navy);
     line-height: 1.1;
-    letter-spacing: -0.02em;
 }
 .kpi-sub {
     font-size: 12px;
@@ -201,149 +288,108 @@ h1 { font-weight: 800 !important; }
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 16px;
+    padding: 5px 14px;
     border-radius: 100px;
     font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0.3px;
-    transition: all 0.2s ease;
 }
 .badge-pass {
-    background: rgba(16, 185, 129, 0.12);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: #ecfdf5; color: var(--green); border: 1px solid #a7f3d0;
 }
 .badge-fail {
-    background: rgba(244, 63, 94, 0.12);
-    color: #fb7185;
-    border: 1px solid rgba(244, 63, 94, 0.2);
+    background: #fef2f2; color: var(--red); border: 1px solid #fecaca;
 }
 .badge-fcar {
-    background: rgba(99, 102, 241, 0.12);
-    color: #a5b4fc;
-    border: 1px solid rgba(99, 102, 241, 0.25);
+    background: #e0f2fe; color: var(--navy); border: 1px solid #7dd3fc;
 }
 .badge-ar {
-    background: rgba(245, 158, 11, 0.12);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    background: #fffbeb; color: var(--amber); border: 1px solid #fde68a;
 }
 .badge-info {
-    background: rgba(6, 182, 212, 0.12);
-    color: #67e8f9;
-    border: 1px solid rgba(6, 182, 212, 0.2);
+    background: #f0fdfa; color: #0d9488; border: 1px solid #99f6e4;
 }
 
 /* ─── Section Header ─── */
 .section-header {
     font-size: 18px;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-weight: 600;
+    color: var(--navy);
     margin: 32px 0 16px 0;
     padding-bottom: 12px;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     gap: 10px;
 }
+.section-header .sec-icon { display:inline-flex; width:22px; height:22px; flex-shrink:0; }
+.sec-icon svg { width:100%; height:100%; }
+.mi-svg { display:inline-flex; vertical-align:middle; width:20px; height:20px; flex-shrink:0; align-items:center; justify-content:center; }
+.mi-svg svg { width:100%; height:100%; }
 
-/* ─── Score Gauge ─── */
-.score-display {
-    text-align: center;
-    padding: 32px 16px;
-}
+/* ─── Score Ring ─── */
+.score-display { text-align: center; padding: 32px 16px; }
 .score-ring {
     position: relative;
-    width: 140px;
-    height: 140px;
+    width: 140px; height: 140px;
     margin: 0 auto 16px;
 }
 .score-ring svg { transform: rotate(-90deg); }
-.score-ring .bg { stroke: rgba(255,255,255,0.06); }
+.score-ring .bg { stroke: #e2e8f0; }
 .score-ring .fg { transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1); }
 .score-ring .value {
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-weight: 700;
 }
-.score-ring .value.denied  { color: var(--accent-rose); }
-.score-ring .value.approved { color: var(--accent-emerald); }
+.score-ring .value.denied  { color: var(--red); }
+.score-ring .value.approved { color: var(--green); }
 
 /* ─── Change Pills ─── */
-.change-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 16px 0;
-}
+.change-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
 .change-pill {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 16px;
-    border-radius: var(--radius-md);
+    padding: 8px 14px;
+    border-radius: 8px;
     font-size: 13px;
     font-weight: 500;
-    backdrop-filter: blur(8px);
-    transition: all 0.2s ease;
 }
-.change-pill:hover { transform: translateY(-1px); }
 .change-pill.up {
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px solid rgba(16, 185, 129, 0.2);
-    color: #6ee7b7;
+    background: #ecfdf5; border: 1px solid #a7f3d0; color: var(--green);
 }
 .change-pill.down {
-    background: rgba(244, 63, 94, 0.08);
-    border: 1px solid rgba(244, 63, 94, 0.2);
-    color: #fda4af;
+    background: #fef2f2; border: 1px solid #fecaca; color: var(--red);
 }
 .change-pill.swap {
-    background: rgba(245, 158, 11, 0.08);
-    border: 1px solid rgba(245, 158, 11, 0.2);
-    color: #fcd34d;
+    background: #fffbeb; border: 1px solid #fde68a; color: var(--amber);
 }
 .change-pill .feat { font-weight: 700; }
 
 /* ─── Narrative Box ─── */
 .narrative-box {
-    background: linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.1) 100%);
-    border: 1px solid rgba(99,102,241,0.2);
-    border-radius: var(--radius-lg);
-    padding: 24px 28px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-left: 4px solid var(--navy);
+    border-radius: var(--radius);
+    padding: 20px 24px;
     font-size: 14px;
     line-height: 1.7;
-    color: var(--text-primary);
+    color: var(--text);
     margin: 20px 0;
-    position: relative;
 }
-.narrative-box::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; bottom: 0;
-    width: 4px;
-    background: var(--gradient-primary);
-    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-}
-.narrative-box b { color: #c4b5fd; }
+.narrative-box b { color: var(--navy); }
 
 /* ─── Audit Card ─── */
 .audit-card {
-    background: var(--gradient-glass);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 28px;
     position: relative;
     overflow: hidden;
-    transition: all 0.3s ease;
-}
-.audit-card:hover {
-    border-color: var(--border-accent);
-    box-shadow: var(--shadow-glow);
 }
 .audit-card::before {
     content: '';
@@ -351,31 +397,23 @@ h1 { font-weight: 800 !important; }
     top: 0; left: 0; bottom: 0;
     width: 4px;
 }
-.audit-card.pass::before { background: var(--gradient-success); }
-.audit-card.fail::before { background: var(--gradient-danger); }
+.audit-card.pass::before { background: var(--green); }
+.audit-card.fail::before { background: var(--red); }
 .audit-card .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
-.audit-card table {
-    width: 100%;
-    border-collapse: collapse;
-}
+.audit-card table { width: 100%; border-collapse: collapse; }
 .audit-card table td {
     padding: 10px 0;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border);
     font-size: 14px;
 }
-.audit-card table td:first-child {
-    color: var(--text-muted);
-    font-weight: 500;
-}
+.audit-card table td:first-child { color: var(--text-secondary); font-weight: 500; }
 .audit-card table td:last-child {
-    text-align: right;
-    font-weight: 700;
-    color: var(--text-primary);
+    text-align: right; font-weight: 700; color: var(--navy);
     font-variant-numeric: tabular-nums;
 }
 .audit-card table tr:last-child td { border-bottom: none; }
@@ -385,21 +423,21 @@ h1 { font-weight: 800 !important; }
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 20px;
-    border-radius: var(--radius-md);
+    padding: 12px 20px;
+    border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
     margin: 12px 0;
 }
 .status-banner.fcar {
-    background: rgba(99, 102, 241, 0.08);
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    color: #a5b4fc;
+    background: #e0f2fe;
+    border: 1px solid #7dd3fc;
+    color: var(--navy);
 }
 .status-banner.ar {
-    background: rgba(245, 158, 11, 0.08);
-    border: 1px solid rgba(245, 158, 11, 0.2);
-    color: #fcd34d;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: var(--amber);
 }
 
 /* ─── Profile Table ─── */
@@ -407,14 +445,14 @@ h1 { font-weight: 800 !important; }
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    border-radius: var(--radius-md);
+    border-radius: 8px;
     overflow: hidden;
-    border: 1px solid var(--border-subtle);
+    border: 1px solid var(--border);
     font-size: 13px;
 }
 .profile-table th {
-    background: rgba(99, 102, 241, 0.08);
-    color: var(--text-muted);
+    background: var(--bg-alt);
+    color: var(--text-secondary);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -424,29 +462,29 @@ h1 { font-weight: 800 !important; }
 }
 .profile-table td {
     padding: 10px 16px;
-    border-bottom: 1px solid var(--border-subtle);
-    color: var(--text-primary);
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
 }
 .profile-table tr:last-child td { border-bottom: none; }
-.profile-table tr:hover td { background: rgba(255,255,255,0.02); }
-.feat-mutable { color: var(--accent-emerald); font-weight: 600; }
+.profile-table tr:hover td { background: var(--bg-alt); }
+.feat-mutable { color: var(--teal); font-weight: 600; }
 .feat-immutable { color: var(--text-muted); }
 
 /* ─── About Hero ─── */
 .about-hero {
-    background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(139,92,246,0.08) 100%);
-    border: 1px solid rgba(99,102,241,0.15);
-    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, #f0f9ff 0%, #f0fdfa 100%);
+    border: 1px solid #bae6fd;
+    border-radius: 16px;
     padding: 40px 48px;
     margin-bottom: 32px;
 }
 .about-hero h2 {
     font-size: 32px;
-    font-weight: 800;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    color: var(--navy);
     margin-bottom: 12px;
+    -webkit-text-fill-color: unset;
+    background: none;
 }
 .about-hero p {
     color: var(--text-secondary);
@@ -455,61 +493,114 @@ h1 { font-weight: 800 !important; }
     max-width: 680px;
 }
 
-/* ─── Streamlit overrides ─── */
-.stTabs [data-baseweb="tab-list"] {
-    gap: 4px;
-    background: var(--bg-glass);
-    border-radius: var(--radius-md);
-    padding: 4px;
-    border: 1px solid var(--border-subtle);
+/* ─── Sparkline Bars ─── */
+.spark-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+.spark-label { font-size: 12px; color: var(--text-secondary); width: 80px; flex-shrink: 0; text-align: right; }
+.spark-track {
+    flex: 1; height: 8px; background: #f1f5f9;
+    border-radius: 4px; overflow: hidden;
 }
-.stTabs [data-baseweb="tab"] {
-    border-radius: var(--radius-sm) !important;
-    color: var(--text-muted) !important;
-    font-weight: 600 !important;
-    font-size: 13px !important;
-    padding: 8px 16px !important;
+.spark-fill { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.spark-fill.indigo  { background: linear-gradient(90deg, var(--navy), var(--teal)); }
+.spark-fill.amber   { background: linear-gradient(90deg, #d97706, #f59e0b); }
+.spark-fill.emerald { background: linear-gradient(90deg, #059669, #10b981); }
+.spark-fill.rose    { background: linear-gradient(90deg, #dc2626, #f43f5e); }
+.spark-val {
+    font-size: 11px; font-weight: 700; color: var(--navy);
+    width: 55px; text-align: right; font-variant-numeric: tabular-nums;
 }
-.stTabs [aria-selected="true"] {
-    background: rgba(99, 102, 241, 0.15) !important;
-    color: #a5b4fc !important;
+
+/* ─── Comparison Arrow ─── */
+.comparison-arrow {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 20px 0;
 }
-.stButton > button[kind="primary"] {
-    background: var(--gradient-primary) !important;
-    border: none !important;
-    border-radius: var(--radius-md) !important;
-    font-weight: 700 !important;
-    font-size: 15px !important;
-    letter-spacing: 0.3px;
-    padding: 14px 24px !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3) !important;
+.comparison-arrow .arrow { font-size: 32px; color: var(--teal); }
+.comparison-arrow .label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.5px; color: var(--teal); margin-top: 4px;
 }
-.stButton > button[kind="primary"]:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: 0 6px 24px rgba(99, 102, 241, 0.45) !important;
+
+/* ─── Flow Steps ─── */
+.flow-container { display: flex; align-items: center; gap: 0; flex-wrap: wrap; margin: 16px 0; }
+.flow-step {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    text-align: center;
+    flex: 1; min-width: 130px;
 }
-.stSelectbox > div > div {
-    background: var(--bg-glass) !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: var(--radius-sm) !important;
+.flow-step .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    background: var(--navy); border-radius: 50%;
+    font-size: 12px; font-weight: 700; color: white; margin-bottom: 8px;
 }
-.stDataFrame {
-    border-radius: var(--radius-md) !important;
-    border: 1px solid var(--border-subtle) !important;
-    overflow: hidden;
+.flow-step .title { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.flow-step .desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
+.flow-arrow { font-size: 18px; color: var(--text-muted); padding: 0 4px; flex-shrink: 0; }
+
+/* ─── Highlight Card ─── */
+.highlight-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    position: relative; overflow: hidden;
 }
-hr { border-color: var(--border-subtle) !important; }
-.stMarkdown a { color: var(--accent-indigo) !important; }
+.highlight-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+}
+.highlight-card.best::after { background: var(--green); }
+.highlight-card.sig::after  { background: var(--navy); }
+.highlight-card .big { font-size: 32px; font-weight: 700; line-height: 1; }
+.highlight-card .big.emerald { color: var(--green); }
+.highlight-card .big.indigo  { color: var(--navy); }
+.highlight-card .big.amber   { color: var(--amber); }
+.highlight-card .lbl {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;
+}
+
+/* ─── Before/After Table ─── */
+.ba-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--border); font-size: 13px; margin: 12px 0;
+}
+.ba-table th {
+    background: var(--bg-alt); color: var(--text-secondary);
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
+    font-size: 11px; padding: 12px 14px; text-align: left;
+}
+.ba-table td {
+    padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text);
+}
+.ba-table tr:last-child td { border-bottom: none; }
+.ba-table tr:hover td { background: var(--bg-alt); }
+.ba-table .delta-up   { color: var(--green); font-weight: 700; }
+.ba-table .delta-down { color: var(--red); font-weight: 700; }
+.ba-table .delta-swap { color: var(--amber); font-weight: 700; }
+
+/* ─── Success Banner ─── */
+.success-banner {
+    background: #ecfdf5; border: 1px solid #a7f3d0;
+    border-radius: var(--radius); padding: 20px 28px;
+    display: flex; align-items: center; gap: 16px; margin: 16px 0;
+}
+.success-banner .icon { font-size: 28px; }
+.success-banner .text { font-size: 15px; font-weight: 600; color: var(--green); }
+.success-banner .sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
 /* ─── Page Title ─── */
 .page-title {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy);
     margin-bottom: 4px;
 }
-.page-title .icon { margin-right: 12px; }
 .page-subtitle {
     font-size: 14px;
     color: var(--text-muted);
@@ -520,274 +611,24 @@ hr { border-color: var(--border-subtle) !important; }
 /* ─── Divider ─── */
 .premium-divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+    background: var(--border);
     margin: 28px 0;
     border: none;
 }
 
-/* ─── Animated Background Orb ─── */
-@keyframes float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(30px, -20px) scale(1.05); }
-    66% { transform: translate(-20px, 15px) scale(0.95); }
-}
-.bg-orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.08;
-    pointer-events: none;
-    z-index: 0;
-    animation: float 20s ease-in-out infinite;
-}
-.bg-orb-1 {
-    width: 400px; height: 400px;
-    background: var(--accent-indigo);
-    top: -100px; right: -100px;
-}
-.bg-orb-2 {
-    width: 300px; height: 300px;
-    background: var(--accent-violet);
-    bottom: -50px; left: -50px;
-    animation-delay: -7s;
-}
-
-/* ─── Success Banner ─── */
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-12px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.success-banner {
-    background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(52,211,153,0.08) 100%);
-    border: 1px solid rgba(16,185,129,0.25);
-    border-radius: var(--radius-lg);
-    padding: 20px 28px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 16px 0;
-    animation: slideDown 0.4s ease-out;
-}
-.success-banner .icon { font-size: 28px; }
-.success-banner .text {
-    font-size: 15px;
-    font-weight: 600;
-    color: #6ee7b7;
-}
-.success-banner .sub {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 2px;
-}
-
-/* ─── Sparkline Bar ─── */
-.spark-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 0;
-}
-.spark-label {
-    font-size: 12px;
-    color: var(--text-secondary);
-    width: 80px;
-    flex-shrink: 0;
-    text-align: right;
-}
-.spark-track {
-    flex: 1;
-    height: 8px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
-}
-.spark-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.spark-fill.indigo { background: var(--gradient-primary); }
-.spark-fill.amber  { background: linear-gradient(90deg, #d97706, #f59e0b); }
-.spark-fill.emerald { background: var(--gradient-success); }
-.spark-fill.rose   { background: var(--gradient-danger); }
-.spark-val {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-primary);
-    width: 55px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-}
-
-/* ─── Comparison Arrow ─── */
-.comparison-arrow {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 0;
-}
-.comparison-arrow .arrow {
-    font-size: 32px;
-    color: var(--accent-emerald);
-    animation: float 3s ease-in-out infinite;
-}
-.comparison-arrow .label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--accent-emerald);
-    margin-top: 4px;
-}
-
-/* ─── Methodology Flow ─── */
-.flow-container {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    flex-wrap: wrap;
-    margin: 16px 0;
-}
-.flow-step {
-    background: var(--gradient-glass);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 16px 20px;
-    text-align: center;
-    flex: 1;
-    min-width: 130px;
-    transition: all 0.3s ease;
-}
-.flow-step:hover {
-    border-color: var(--border-accent);
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-2px);
-}
-.flow-step .num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px; height: 28px;
-    background: var(--gradient-primary);
-    border-radius: 50%;
-    font-size: 12px;
-    font-weight: 800;
-    color: white;
-    margin-bottom: 8px;
-}
-.flow-step .title {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-}
-.flow-step .desc {
-    font-size: 10px;
-    color: var(--text-muted);
-    line-height: 1.4;
-}
-.flow-arrow {
-    font-size: 18px;
-    color: var(--text-muted);
-    padding: 0 4px;
-    flex-shrink: 0;
-}
-
-/* ─── Highlight Card (Benchmarks) ─── */
-.highlight-card {
-    background: var(--gradient-glass);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    text-align: center;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-.highlight-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-}
-.highlight-card.best::after  { background: var(--gradient-success); }
-.highlight-card.sig::after   { background: var(--gradient-primary); }
-.highlight-card:hover {
-    border-color: var(--border-accent);
-    box-shadow: var(--shadow-glow);
-}
-.highlight-card .big {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1;
-}
-.highlight-card .big.emerald { color: var(--accent-emerald); }
-.highlight-card .big.indigo  { color: var(--accent-indigo); }
-.highlight-card .big.amber   { color: var(--accent-amber); }
-.highlight-card .lbl {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 8px;
-}
-
-/* ─── Before/After Table ─── */
-.ba-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    border: 1px solid var(--border-subtle);
-    font-size: 13px;
-    margin: 12px 0;
-}
-.ba-table th {
-    background: rgba(99, 102, 241, 0.08);
-    color: var(--text-muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    font-size: 11px;
-    padding: 12px 14px;
-    text-align: left;
-}
-.ba-table td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border-subtle);
-    color: var(--text-primary);
-}
-.ba-table tr:last-child td { border-bottom: none; }
-.ba-table tr:hover td { background: rgba(255,255,255,0.02); }
-.ba-table .delta-up   { color: #34d399; font-weight: 700; }
-.ba-table .delta-down { color: #fb7185; font-weight: 700; }
-.ba-table .delta-swap { color: #fbbf24; font-weight: 700; }
-
 /* ─── Footer ─── */
 .app-footer {
-    margin-top: 48px;
-    padding: 20px 0;
-    border-top: 1px solid var(--border-subtle);
-    text-align: center;
-    font-size: 11px;
-    color: var(--text-muted);
-    letter-spacing: 0.3px;
+    margin-top: 48px; padding: 20px 0;
+    border-top: 1px solid var(--border);
+    text-align: center; font-size: 11px; color: var(--text-muted);
 }
-.app-footer a { color: var(--accent-indigo) !important; text-decoration: none; }
+.app-footer a { color: var(--navy) !important; text-decoration: none; }
 .app-footer .sep { margin: 0 8px; opacity: 0.3; }
+
+/* ─── Hide decoration ─── */
+[data-testid="stDecoration"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
-
-# Floating background orbs
-st.markdown(
-    '<div class="bg-orb bg-orb-1"></div><div class="bg-orb bg-orb-2"></div>',
-    unsafe_allow_html=True,
-)
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -855,11 +696,82 @@ def _kpi(label, value, color="", sub=""):
     )
 
 
+_TEAL = "#14b8a6"
+
+_IC = {
+    "person":        f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>',
+    "gavel":         f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M1 21h12v2H1v-2zm8.75-7.75L3 20l1.41 1.41 6.75-6.75-1.41-1.41zM22 5.72l-4.6-3.86-1.29 1.53 4.6 3.86L22 5.72zM7.88 8.3l2.95 2.95 1.41-1.41-2.95-2.95L7.88 8.3zm6.59-2.12l-1.41-1.41-3.54 3.54 1.41 1.41 3.54-3.54zm1.57 4.45l1.41-1.41-5.66-5.66-1.41 1.41 5.66 5.66z"/></svg>',
+    "trending_up":   f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>',
+    "build":         f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>',
+    "lock":          '<svg viewBox="0 0 24 24" fill="#94a3b8"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>',
+    "compare_arrows":f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-1v-3H22V8h-7.01V5L11 9l3.99 4z"/></svg>',
+    "bar_chart":     f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>',
+    "search":        f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>',
+    "science":       f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M13 11.33L18 18H6l5-6.67V6h2v5.33M15.96 4H8.04C7.62 4 7.28 4.34 7.28 4.76c0 .42.34.76.76.76H9v4.67L3.2 18.4c-.49.66-.02 1.6.8 1.6h16c.82 0 1.29-.94.8-1.6L15 10.43V5.52c.42 0 .76-.34.76-.76 0-.42-.34-.76-.8-.76z"/></svg>',
+    "summarize":     f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 9H7v-2h6v2zm3 4H7v-2h9v2zm-3-8V3.5L18.5 9H13z"/></svg>',
+    "target":        f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3-8c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3z"/></svg>',
+    "sync":          f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>',
+    "architecture":  f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M6.36 18.78L6.61 21l1.62-1.54 2.77-7.6c-.68-.17-1.28-.51-1.77-.98l-3.27 8.9zM14.77 10.88c-.49.47-1.1.81-1.77.98l2.77 7.6L17.39 21l.25-2.22-3.27-8.9zm3.09-5.73L15.33 2H8.67L6.14 5.15l1.86.93 1.67-2.08h4.66l1.67 2.08 1.86-.93zM12 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>',
+    "menu_book":     f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>',
+    "auto_stories":  f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M19 1l-5 5v11l5-4.5V1zM1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5V8c-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6zm20-1c-.7.25-1.4.55-2 1v12.5c.6.45 1.25.75 2 1V5z"/></svg>',
+    "link":          f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>',
+    "balance":       f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>',
+    "straighten":    f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h2v4h2V8h2v4h2V8h2v4h2V8h2v4h2V8h2v4z"/></svg>',
+    "check_circle":  '<svg viewBox="0 0 24 24" fill="#10b981"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+    "warning":       '<svg viewBox="0 0 24 24" fill="#fbbf24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
+    "info":          '<svg viewBox="0 0 24 24" fill="#f59e0b"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>',
+    "arrow_forward": f'<svg viewBox="0 0 24 24" fill="{_TEAL}"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>',
+}
+
+def _icon(name, size=20):
+    """Return an inline SVG icon. Always renders — no external font needed."""
+    svg = _IC.get(name, "")
+    return f'<span class="mi-svg" style="width:{size}px;height:{size}px;">{svg}</span>'
+
+
 def _section(icon, title):
     st.markdown(
-        f'<div class="section-header">{icon} {title}</div>',
+        f'<div class="section-header">'
+        f'<span class="sec-icon">{_IC.get(icon, "")}</span> {title}</div>',
         unsafe_allow_html=True,
     )
+
+
+# ── Human-readable labels for coded dataset values ──────────────────
+GERMAN_VALUE_LABELS = {
+    # Checking account status
+    "A11": "Overdrawn (< 0 DM)",
+    "A12": "Balance 0 \u2013 200 DM",
+    "A13": "Balance \u2265 200 DM",
+    "A14": "No Checking Account",
+    # Savings account status
+    "A61": "Savings < 100 DM",
+    "A62": "Savings 100 \u2013 500 DM",
+    "A63": "Savings 500 \u2013 1,000 DM",
+    "A64": "Savings \u2265 1,000 DM",
+    "A65": "No Savings Account",
+}
+
+GERMAN_FEATURE_LABELS = {
+    "checking_status": "Checking Account Status",
+    "savings_status": "Savings Account Status",
+    "duration": "Loan Duration (months)",
+    "credit_amount": "Loan Amount (DM)",
+    "installment_commitment": "Installment Rate (% of income)",
+    "existing_credits": "Existing Credits at Bank",
+    "residence_since": "Years at Residence",
+}
+
+
+def _human_value(code: str) -> str:
+    """Translate a coded value like 'A12' to 'A12 (Balance 0\u2013200 DM)'."""
+    label = GERMAN_VALUE_LABELS.get(code)
+    return f"{code} ({label})" if label else code
+
+
+def _human_feature(name: str) -> str:
+    """Translate a raw feature name like 'checking_status' to a readable label."""
+    return GERMAN_FEATURE_LABELS.get(name, name.replace("_", " ").title())
 
 
 def _divider():
@@ -951,7 +863,7 @@ def _before_after_table(changes):
     for c in changes:
         d = c["_dir"]
         delta_cls = {"up": "delta-up", "down": "delta-down", "swap": "delta-swap"}[d]
-        arrow = {"up": "\u2191", "down": "\u2193", "swap": "\U0001f504"}[d]
+        arrow = {"up": "\u2191", "down": "\u2193", "swap": "\u2194"}[d]
         delta_key = "\u0394 Amount"
         delta_val = c[delta_key]
         rows += (
@@ -977,37 +889,59 @@ def _before_after_table(changes):
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 def main():
-    # ── Sidebar branding ──
-    st.sidebar.markdown(
-        '<div style="text-align:center;padding:16px 0 8px;">'
-        '<div style="font-size:36px;">\u2696\ufe0f</div>'
-        '<div style="font-size:22px;font-weight:800;letter-spacing:-0.02em;color:#fff !important;margin-top:4px;">FCAR</div>'
-        '<div style="font-size:11px;color:#94a3b8 !important;letter-spacing:1.5px;text-transform:uppercase;">Fairness Constrained<br/>Actionable Recourse</div>'
-        '</div>',
-        unsafe_allow_html=True,
-    )
+    # ── Sidebar: Logo ──
+    logo_path = ROOT / "assets" / "logo.png"
+    if logo_path.exists():
+        try:
+            st.sidebar.image(str(logo_path), use_container_width=True)
+        except Exception:
+            # Fallback if image is invalid
+            st.sidebar.markdown(
+                '<div style="text-align:center;padding:20px 0 8px;">'
+                '<div style="font-size:24px;font-weight:700;color:#0c4466;">FCAR</div>'
+                '<div style="font-size:10px;color:#94a3b8;letter-spacing:1.2px;'
+                'text-transform:uppercase;">Fairness Constrained<br/>Actionable Recourse</div>'
+                '</div>',
+                unsafe_allow_html=True,
+            )
+    else:
+        st.sidebar.markdown(
+            '<div style="text-align:center;padding:20px 0 8px;">'
+            '<div style="font-size:24px;font-weight:700;color:#0c4466;">FCAR</div>'
+            '<div style="font-size:10px;color:#94a3b8;letter-spacing:1.2px;'
+            'text-transform:uppercase;">Fairness Constrained<br/>Actionable Recourse</div>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
     st.sidebar.markdown("---")
 
+    # ── Sidebar: Navigation ──
     page = st.sidebar.radio(
         "Navigation",
         [
-            "\U0001f50d Interactive Recourse",
-            "\U0001f4cb Fairness Audit",
-            "\U0001f4ca Evaluation Metrics",
-            "\u2139\ufe0f About & Methodology",
+            "Interactive Recourse",
+            "Fairness Audit",
+            "Evaluation Metrics",
+            "About & Methodology",
         ],
         label_visibility="collapsed",
     )
 
     st.sidebar.markdown("---")
-    st.sidebar.markdown("##### \u2699\ufe0f Dataset")
+
+    # ── Sidebar: Dataset ──
+    st.sidebar.markdown(
+        '<div style="font-size:12px;font-weight:600;color:#94a3b8;'
+        'text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Dataset</div>',
+        unsafe_allow_html=True,
+    )
     dataset = st.sidebar.selectbox(
         "Dataset",
         ["german", "adult", "default_credit"],
         format_func=lambda x: {
-            "german": "\U0001f1e9\U0001f1ea German Credit",
-            "adult": "\U0001f1fa\U0001f1f8 Adult Income",
-            "default_credit": "\U0001f1f9\U0001f1fc Default Credit",
+            "german": "German Credit",
+            "adult": "Adult Income",
+            "default_credit": "Default Credit",
         }[x],
         label_visibility="collapsed",
     )
@@ -1025,18 +959,19 @@ def main():
 
     st.sidebar.markdown("---")
     st.sidebar.markdown(
-        '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);'
-        'border-radius:12px;padding:16px;text-align:center;">'
-        '<div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#64748b !important;margin-bottom:8px;">Test Set Stats</div>'
-        f'<div style="font-size:24px;font-weight:800;color:#f1f5f9 !important;">{len(rejected_indices)}</div>'
-        f'<div style="font-size:12px;color:#94a3b8 !important;">rejected of {len(X_test)} ({rej_pct:.0%})</div>'
+        '<div style="background:#f8fafc;border:1px solid #e2e8f0;'
+        'border-radius:10px;padding:16px;text-align:center;">'
+        '<div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;'
+        'color:#94a3b8;margin-bottom:8px;font-weight:600;">Test Set Stats</div>'
+        f'<div style="font-size:28px;font-weight:700;color:#0c4466;">{len(rejected_indices)}</div>'
+        f'<div style="font-size:12px;color:#94a3b8;">rejected of {len(X_test)} ({rej_pct:.0%})</div>'
         '</div>',
         unsafe_allow_html=True,
     )
 
     st.sidebar.markdown("---")
     st.sidebar.markdown(
-        '<div style="text-align:center;font-size:10px;color:#475569 !important;padding:8px;">'
+        '<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px;">'
         'Aqdhas Ali \u00b7 IIT / UoW \u00b7 2026</div>',
         unsafe_allow_html=True,
     )
@@ -1062,7 +997,7 @@ def page_recourse(dataset, pipe, config, X_train, X_test, A_test,
     ds_label = dataset.replace("_", " ").title()
 
     st.markdown(
-        f'<div class="page-title"><span class="icon">\U0001f50d</span>'
+        f'<div class="page-title">'
         f'Individual Recourse \u2014 {ds_label}</div>',
         unsafe_allow_html=True,
     )
@@ -1087,27 +1022,26 @@ def page_recourse(dataset, pipe, config, X_train, X_test, A_test,
             available_gcols.append(s["group_col"])
     available_gcols = sorted(set(available_gcols))
 
-    # ── Controls card ──
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    # ── Controls ──
     c1, c2, c3 = st.columns([1.2, 1, 1.5])
     with c1:
         selected_idx = int(
             st.selectbox(
-                "\U0001f464 Select Applicant",
+                "Select Applicant",
                 options=rejected_indices,
                 format_func=lambda x: f"Applicant #{x}",
             )
         )
     with c2:
         use_fcar = st.toggle(
-            "\u2696\ufe0f Enable FCAR",
+            "Enable FCAR",
             value=False,
             help="Apply fairness-adjusted cost weights from Auto-FCAR tuning.",
         )
     with c3:
         if use_fcar and available_gcols:
             selected_gcol = st.selectbox(
-                "\U0001f3af FCAR Group Attribute",
+                "FCAR Group Attribute",
                 options=available_gcols,
                 format_func=lambda x: x.replace("_", " ").title(),
                 help="Sensitive attribute for FCAR weight adjustment",
@@ -1119,17 +1053,18 @@ def page_recourse(dataset, pipe, config, X_train, X_test, A_test,
 
     if use_fcar:
         st.markdown(
-            '<div class="status-banner fcar">\u2696\ufe0f FCAR Mode \u2014 '
+            '<div class="status-banner fcar">'
+            f'{_icon("balance", 18)} FCAR Mode \u2014 '
             'Fairness-constrained cost weights active</div>',
             unsafe_allow_html=True,
         )
     else:
         st.markdown(
-            '<div class="status-banner ar">\U0001f4d0 Unconstrained AR \u2014 '
+            '<div class="status-banner ar">'
+            f'{_icon("straighten", 18)} Unconstrained AR \u2014 '
             'Standard cost minimization (no fairness adjustment)</div>',
             unsafe_allow_html=True,
         )
-    st.markdown('</div>', unsafe_allow_html=True)
     _divider()
 
     # ── Applicant Profile ──
@@ -1140,7 +1075,7 @@ def page_recourse(dataset, pipe, config, X_train, X_test, A_test,
 
     col_profile, col_score = st.columns([3, 1])
     with col_profile:
-        _section("\U0001f464", "Applicant Profile")
+        _section("person", "Applicant Profile")
         badges = ""
         for g in group_cols:
             if g in sensitive_info.index:
@@ -1159,11 +1094,11 @@ def page_recourse(dataset, pipe, config, X_train, X_test, A_test,
         table_rows = ""
         for feat, val in profile.items():
             if feat in mutable_num:
-                cls, tag, ic = "feat-mutable", "Mutable (Numeric)", "\U0001f527"
+                cls, tag, ic = "feat-mutable", "Mutable (Numeric)", _icon("build", 14)
             elif feat in mutable_cat:
-                cls, tag, ic = "feat-mutable", "Mutable (Categorical)", "\U0001f527"
+                cls, tag, ic = "feat-mutable", "Mutable (Categorical)", _icon("build", 14)
             else:
-                cls, tag, ic = "feat-immutable", "Immutable", "\U0001f512"
+                cls, tag, ic = "feat-immutable", "Immutable", _icon("lock", 14)
             table_rows += (
                 f'<tr><td class="{cls}">{feat}</td><td>{val}</td>'
                 f'<td><span style="font-size:11px;">{ic} {tag}</span></td></tr>'
@@ -1178,13 +1113,13 @@ def page_recourse(dataset, pipe, config, X_train, X_test, A_test,
         )
 
     with col_score:
-        _section("\U0001f4c9", "Model Decision")
+        _section("gavel", "Model Decision")
         denied = _is_rejected(current_prob, target_cls)
         st.markdown(_score_ring(current_prob, denied), unsafe_allow_html=True)
 
     _divider()
     if st.button(
-        "\U0001f680 Generate Optimal Recourse Plan",
+        "Generate Optimal Recourse Plan",
         type="primary",
         use_container_width=True,
     ):
@@ -1257,7 +1192,7 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
                     'border:1px solid rgba(245,158,11,0.25);'
                     'border-radius:var(--radius-lg);padding:20px 24px;margin:12px 0;">'
                     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'
-                    '<span style="font-size:20px;">\u26a0\ufe0f</span>'
+                    f'{_icon("warning", 20)}'
                     '<span style="font-size:14px;font-weight:700;color:#fbbf24;">'
                     f'No FCAR overrides for group: {gcol} = {gval}</span></div>'
                     '<div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">'
@@ -1305,7 +1240,8 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
 
     if applied_overrides:
         st.markdown(
-            f'<div class="status-banner fcar">\u2696\ufe0f FCAR weights '
+            f'<div class="status-banner fcar">'
+            f'{_icon("balance", 18)} FCAR weights '
             f'applied for: <b>{active_group}</b></div>',
             unsafe_allow_html=True,
         )
@@ -1315,13 +1251,13 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
             'border:1px solid rgba(245,158,11,0.2);'
             'border-radius:var(--radius-md);padding:12px 18px;margin:8px 0;'
             'font-size:13px;color:#fcd34d;display:flex;align-items:center;gap:10px;">'
-            '<span style="font-size:16px;">\u26a0\ufe0f</span>'
+            f'{_icon("info", 16)}'
             'No FCAR overrides for this group \u2014 result is identical to unconstrained AR.'
             '</div>',
             unsafe_allow_html=True,
         )
 
-    _section("\U0001f4c8", "Recourse Plan (UC-105)")
+    _section("trending_up", "Recourse Plan (UC-105)")
 
     s1, s2, s3, s4 = st.columns(4)
     with s1:
@@ -1331,7 +1267,7 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
     with s3:
         _kpi(
             "Decision Flipped",
-            "\u2705 YES" if flipped else "\u274c NO",
+            "YES" if flipped else "NO",
             "green" if flipped else "red",
         )
     with s4:
@@ -1343,7 +1279,7 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
 
     if not flipped:
         st.error(
-            "\u274c The solver could not find a valid recourse path within "
+            "The solver could not find a valid recourse path within "
             "the plausibility constraints."
         )
         _footer()
@@ -1353,7 +1289,7 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
     score_delta = abs(p1 - p0)
     st.markdown(
         '<div class="success-banner">'
-        '<div class="icon">\U0001f389</div>'
+        f'<div class="icon">{_icon("check_circle", 28)}</div>'
         '<div><div class="text">Decision Successfully Overturned</div>'
         f'<div class="sub">Score improved by {score_delta:.4f} \u2014 '
         f'from {p0:.4f} to {p1:.4f}</div></div></div>',
@@ -1389,7 +1325,8 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
         v0, v1 = float(x0.get(c, np.nan)), float(x_cf.get(c, np.nan))
         if pd.notna(v0) and pd.notna(v1) and abs(v1 - v0) > 1e-4:
             changes.append({
-                "Feature": c,
+                "Feature": _human_feature(c),
+                "_raw_feature": c,
                 "Action": "\u2191 Increase" if v1 > v0 else "\u2193 Decrease",
                 "Before": f"{v0:.2f}",
                 "After": f"{v1:.2f}",
@@ -1401,10 +1338,11 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
         v0, v1 = str(x0.get(c, "")), str(x_cf.get(c, ""))
         if v0 != v1:
             changes.append({
-                "Feature": c,
-                "Action": "\U0001f504 Change",
-                "Before": v0,
-                "After": v1,
+                "Feature": _human_feature(c),
+                "_raw_feature": c,
+                "Action": "Change",
+                "Before": _human_value(v0),
+                "After": _human_value(v1),
                 "\u0394 Amount": "\u2014",
                 "Cost Weight": f"{cat_w.get(c, 0.25):.3f}",
                 "_dir": "swap",
@@ -1416,11 +1354,11 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
         return
 
     # ── Change pills ──
-    _section("\U0001f527", "Required Changes")
+    _section("build", "Required Changes")
     pills = '<div class="change-pills">'
     for c in changes:
         d = c["_dir"]
-        arrow = {"up": "\u2191", "down": "\u2193", "swap": "\U0001f504"}[d]
+        arrow = {"up": "\u2191", "down": "\u2193", "swap": "\u2194"}[d]
         pills += (
             f'<div class="change-pill {d}">'
             f'<span class="feat">{c["Feature"]}</span> '
@@ -1437,32 +1375,155 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
     dash = "\u2014"
     parts = []
     for c in changes:
+        feat = c["Feature"]
+        bef = c["Before"]
+        aft = c["After"]
         if c[delta_key] != dash:
             action = c["Action"].split(" ", 1)[1]
-            feat = c["Feature"]
             amt = c[delta_key]
-            bef = c["Before"]
-            aft = c["After"]
             parts.append(f"{action} {feat} by {amt} (from {bef} to {aft})")
         else:
-            feat = c["Feature"]
-            bef = c["Before"]
-            aft = c["After"]
             parts.append(f"Change {feat} from {bef} to {aft}")
-    narrative = (
+
+    action_text = (
         "To overturn the negative decision, the applicant must: "
         + "; ".join(parts) + "."
     )
-    st.markdown(
-        f'<div class="narrative-box">\U0001f4a1 <b>Explanation:</b><br/>'
-        f'{narrative}</div>',
-        unsafe_allow_html=True,
-    )
+
+    # ── Build FCAR-aware explanation ──
+    if applied_overrides:
+        # Check if AR baseline produced the same actions
+        ar_actions_same = False
+        if x_cf_ar is not None:
+            ar_changes_set = set()
+            fcar_changes_set = set()
+            for c_col in get_mutable_numeric_cols(config):
+                v0_val = float(x0.get(c_col, 0))
+                v_ar = float(x_cf_ar.get(c_col, 0)) if x_cf_ar is not None else v0_val
+                v_fc = float(x_cf.get(c_col, 0))
+                if abs(v_ar - v0_val) > 1e-4:
+                    ar_changes_set.add((c_col, round(v_ar, 2)))
+                if abs(v_fc - v0_val) > 1e-4:
+                    fcar_changes_set.add((c_col, round(v_fc, 2)))
+            for c_col in get_mutable_categorical_cols(config):
+                v0_val = str(x0.get(c_col, ""))
+                v_ar = str(x_cf_ar.get(c_col, "")) if x_cf_ar is not None else v0_val
+                v_fc = str(x_cf.get(c_col, ""))
+                if v_ar != v0_val:
+                    ar_changes_set.add((c_col, v_ar))
+                if v_fc != v0_val:
+                    fcar_changes_set.add((c_col, v_fc))
+            ar_actions_same = (ar_changes_set == fcar_changes_set)
+
+        # Get default (AR) weights for comparison
+        default_num_w_narr = dict(get_numeric_cost_weights(config))
+        default_cat_w_narr = dict(get_categorical_step_weights(config))
+
+        # Build weight comparison details
+        weight_diffs = []
+        for c in changes:
+            feat = c["Feature"]
+            raw_feat = c.get("_raw_feature", feat)
+            fcar_w = float(c["Cost Weight"])
+            ar_w = default_num_w_narr.get(raw_feat, default_cat_w_narr.get(raw_feat, fcar_w))
+            if abs(fcar_w - ar_w) > 1e-4:
+                pct = ((ar_w - fcar_w) / ar_w) * 100 if ar_w > 0 else 0
+                weight_diffs.append(
+                    f"<b>{feat}</b>: {ar_w:.3f} &rarr; {fcar_w:.3f} "
+                    f"({pct:+.0f}%)"
+                )
+
+        if ar_actions_same and weight_diffs:
+            # Same actions, different weights — explain the academic rationale
+            weight_lines = "<br/>".join(weight_diffs)
+            narrative_html = (
+                f'<div class="narrative-box">'
+                f'<b>Explanation (FCAR Mode):</b><br/>'
+                f'{action_text}'
+                f'<br/><br/>'
+                f'<b>Why are the actions the same as standard AR?</b><br/>'
+                f'For this applicant, only <b>one feasible path</b> exists to '
+                f'overturn the decision given the model coefficients and '
+                f'plausibility constraints (e.g., maximum loan reduction, '
+                f'monotonic category improvements). No weight adjustment can '
+                f'create an alternative path that does not exist.'
+                f'<br/><br/>'
+                f'<b>What did FCAR change?</b><br/>'
+                f'FCAR adjusted the <b>cost weights</b> used to measure how '
+                f'burdensome this action is for <b>{active_group}</b>:<br/>'
+                f'{weight_lines}'
+                f'<br/><br/>'
+                f'<b>How does this help fairness?</b><br/>'
+                f'FCAR operates on the <i>Social Burden</i> metric: '
+                f'<code>SB(g) = rejection_rate(g) &times; avg_recourse_cost(g)</code>. '
+                f'By lowering the cost weight, the <b>same physical action</b> '
+                f'is measured as less costly for this group. Across all '
+                f'applicants in <b>{active_group}</b>, this systematically '
+                f'reduces the group\'s aggregate recourse burden, narrowing the '
+                f'disparity gap between demographic groups. '
+                f'The action itself remains unchanged because it is the only '
+                f'mathematically feasible solution &mdash; but its <b>measured '
+                f'cost contribution</b> to the group\'s Social Burden is reduced.'
+                f'</div>'
+            )
+        elif weight_diffs:
+            # Different actions AND different weights
+            weight_lines = "<br/>".join(weight_diffs)
+            narrative_html = (
+                f'<div class="narrative-box">'
+                f'<b>Explanation (FCAR Mode):</b><br/>'
+                f'{action_text}'
+                f'<br/><br/>'
+                f'<b>How does this differ from standard AR?</b><br/>'
+                f'FCAR adjusted the cost weights for <b>{active_group}</b>, '
+                f'which changed the solver\'s optimization objective:<br/>'
+                f'{weight_lines}'
+                f'<br/><br/>'
+                f'With lower weights on certain features, those changes become '
+                f'<b>cheaper in the objective function</b>, causing the MIP '
+                f'solver to choose a <b>different recourse path</b> than '
+                f'standard AR. This redistributes effort toward actions that '
+                f'are less burdensome for this demographic group.'
+                f'<br/><br/>'
+                f'<b>Fairness impact:</b> Across all applicants in '
+                f'<b>{active_group}</b>, these re-weighted paths reduce the '
+                f'group\'s aggregate Social Burden '
+                f'(<code>SB = rejection_rate &times; avg_cost</code>), '
+                f'narrowing the disparity gap between demographic groups.'
+                f'</div>'
+            )
+        else:
+            # FCAR active but no weight differences on changed features
+            narrative_html = (
+                f'<div class="narrative-box">'
+                f'<b>Explanation (FCAR Mode):</b><br/>'
+                f'{action_text}'
+                f'<br/><br/>'
+                f'<i>The FCAR weight adjustments for <b>{active_group}</b> '
+                f'did not affect the features involved in this recourse plan. '
+                f'The result is equivalent to standard AR for this applicant.</i>'
+                f'</div>'
+            )
+    else:
+        # Standard AR mode
+        narrative_html = (
+            f'<div class="narrative-box">'
+            f'<b>Explanation:</b><br/>'
+            f'{action_text}'
+            f'<br/><br/>'
+            f'<i>This is a standard Algorithmic Recourse (AR) recommendation '
+            f'using uniform cost weights. Enable FCAR above to see how '
+            f'fairness-constrained weights adjust the recourse cost for '
+            f'specific demographic groups.</i>'
+            f'</div>'
+        )
+
+    st.markdown(narrative_html, unsafe_allow_html=True)
 
     # ── AR vs FCAR side-by-side comparison (only when FCAR overrides applied) ──
     if applied_overrides and x_cf_ar is not None:
         _divider()
-        _section("\U0001f50d", "AR vs FCAR Comparison")
+        _section("compare_arrows", "AR vs FCAR Comparison")
         st.markdown(
             '<div style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">'
             'Side-by-side view showing how FCAR redistributes effort across features '
@@ -1560,7 +1621,7 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
                 '<div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);'
                 'border-radius:var(--radius-md);padding:14px 20px;margin-top:12px;font-size:13px;'
                 'color:var(--text-secondary);line-height:1.7;">'
-                f'\U0001f4ca <b>FCAR redistributes the recourse burden</b> by adjusting cost weights. '
+                f'{_icon("bar_chart", 16)} <b>FCAR redistributes the recourse burden</b> by adjusting cost weights. '
                 f'AR changes <b>{ar_feat_count}</b> feature(s), FCAR changes <b>{fc_feat_count}</b>. '
                 f'With lower weights on features like <i>duration</i> ({num_w.get("duration", 1.0):.3f}) '
                 f'and <i>credit_amount</i> ({num_w.get("credit_amount", 1.0):.3f}), '
@@ -1574,7 +1635,7 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
                 '<div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);'
                 'border-radius:var(--radius-md);padding:14px 20px;margin-top:4px;font-size:13px;'
                 'color:#fcd34d;">'
-                '\u26a0\ufe0f For this specific applicant, AR and FCAR produce the same recourse path. '
+                f'{_icon("info", 16)} For this specific applicant, AR and FCAR produce the same recourse path. '
                 'This can happen when the decision boundary constraint dominates the solution — '
                 'the applicant\'s score is far enough from 0.5 that the solver must push features to '
                 'their plausibility limits regardless of weights. '
@@ -1594,7 +1655,7 @@ def page_audit(dataset):
     ds_label = dataset.replace("_", " ").title()
 
     st.markdown(
-        f'<div class="page-title"><span class="icon">\U0001f4cb</span>'
+        f'<div class="page-title">'
         f'Fairness Audit \u2014 {ds_label}</div>',
         unsafe_allow_html=True,
     )
@@ -1615,7 +1676,7 @@ def page_audit(dataset):
         return
 
     selected_key = st.selectbox(
-        "\U0001f3af Sensitive Attribute",
+        "Sensitive Attribute",
         list(ds_summaries.keys()),
         format_func=lambda x: ds_summaries[x]["group_col"].replace("_", " ").title(),
     )
@@ -1628,7 +1689,7 @@ def page_audit(dataset):
     _divider()
 
     # ── KPIs ──
-    _section("\U0001f4ca", "Key Metrics")
+    _section("bar_chart", "Key Metrics")
     k1, k2, k3, k4, k5 = st.columns(5)
     with k1:
         _kpi("Evaluated", str(data["n_evaluated"]), "cyan")
@@ -1654,7 +1715,7 @@ def page_audit(dataset):
     _divider()
 
     # ── Side-by-side Audit Cards ──
-    _section("\U0001f50e", "MISOB Audit Comparison (UC-103)")
+    _section("search", "MISOB Audit Comparison (UC-103)")
     col_ar, col_arrow, col_fc = st.columns([5, 1, 5])
 
     for col, label, d, badge_cls in [
@@ -1665,9 +1726,9 @@ def page_audit(dataset):
             passed = d["audit"].get("passed", False)
             card_cls = "pass" if passed else "fail"
             status_badge = (
-                '<span class="badge badge-pass">PASS \u2705</span>'
+                '<span class="badge badge-pass">PASS</span>'
                 if passed
-                else '<span class="badge badge-fail">FAIL \u274c</span>'
+                else '<span class="badge badge-fail">FAIL</span>'
             )
             dash = "\u2014"
             audit_score = d["audit"]["audit_score"]
@@ -1705,7 +1766,7 @@ def page_audit(dataset):
         red_str = f"{reduction:.0f}%" if reduction > 0 else "\u2014"
         st.markdown(
             '<div class="comparison-arrow">'
-            '<div class="arrow">\u27a1</div>'
+            f'<div class="arrow">{_icon("arrow_forward", 32)}</div>'
             f'<div class="label">\u2193 {red_str}</div>'
             '</div>',
             unsafe_allow_html=True,
@@ -1715,7 +1776,7 @@ def page_audit(dataset):
     wil = stats.get("overall_wilcoxon", {})
     if wil:
         _divider()
-        _section("\U0001f4d0", "Statistical Validation")
+        _section("science", "Statistical Validation")
         t1, t2, t3 = st.columns(3)
         with t1:
             p_val = wil.get("p_value", 1.0)
@@ -1735,7 +1796,7 @@ def page_audit(dataset):
             sig = wil.get("significant_at_005", False)
             _kpi(
                 "Significant (\u03b1=0.05)",
-                "\u2705 Yes" if sig else "\u274c No",
+                "Yes" if sig else "No",
                 "green" if sig else "red",
             )
 
@@ -1761,7 +1822,7 @@ def page_audit(dataset):
 
 def page_evaluation():
     st.markdown(
-        '<div class="page-title"><span class="icon">\U0001f4ca</span>'
+        '<div class="page-title">'
         'Evaluation Metrics</div>',
         unsafe_allow_html=True,
     )
@@ -1816,7 +1877,7 @@ def page_evaluation():
                 unsafe_allow_html=True,
             )
         with hc4:
-            sig_label = "\u2705 ALL" if all_sig else "\u26a0\ufe0f PARTIAL"
+            sig_label = "ALL" if all_sig else "PARTIAL"
             sig_color = "emerald" if all_sig else "amber"
             st.markdown(
                 f'<div class="highlight-card sig">'
@@ -1874,7 +1935,7 @@ def page_evaluation():
                 )
 
     _divider()
-    _section("\U0001f4cb", "Results Summary")
+    _section("summarize", "Results Summary")
 
     bench_dir = ART / "reports" / "benchmarks"
     if bench_dir.exists():
@@ -1912,7 +1973,7 @@ def page_evaluation():
 def page_about():
     st.markdown(
         '<div class="about-hero">'
-        '<h2>\u2696\ufe0f Fairness Constrained Actionable Recourse</h2>'
+        '<h2>Fairness Constrained Actionable Recourse</h2>'
         '<p>FCAR is a research framework that addresses the systemic unfairness '
         'in algorithmic recourse. When AI systems deny financial services, the '
         'recommended corrective actions often impose a disproportionately higher '
@@ -1925,25 +1986,25 @@ def page_about():
     col1, col2 = st.columns([1.5, 1])
 
     with col1:
-        _section("\U0001f3af", "Research Questions & Answers")
+        _section("target", "Research Questions & Answers")
         for rq, q, a, status in [
             (
                 "RQ1",
                 "Can Social Burden be integrated into constrained optimization?",
                 "Yes \u2014 MISOB metric drives asymmetric weight tuning in the MIP solver",
-                "\u2705",
+                _icon("check_circle", 22),
             ),
             (
                 "RQ2",
                 "Does FCAR reduce disparity across groups?",
                 "Yes \u2014 45\u201364% gap reduction across all benchmarks, all p < 0.01",
-                "\u2705",
+                _icon("check_circle", 22),
             ),
             (
                 "RQ3",
                 "Does FCAR preserve utility?",
                 "Yes \u2014 100% feasibility, 100% flip rate, lower average burden",
-                "\u2705",
+                _icon("check_circle", 22),
             ),
         ]:
             st.markdown(
@@ -1957,10 +2018,10 @@ def page_about():
                 unsafe_allow_html=True,
             )
 
-        _section("\U0001f504", "FCAR Pipeline")
+        _section("sync", "FCAR Pipeline")
         _methodology_flow()
 
-        _section("\U0001f3d7\ufe0f", "System Architecture")
+        _section("architecture", "System Architecture")
         arch_data = [
             ("Model", "Scikit-learn Logistic Regression + ColumnTransformer"),
             ("Solver", "Pyomo MIP with HiGHS (Mixed-Integer Linear Programming)"),
@@ -1983,7 +2044,7 @@ def page_about():
         )
 
     with col2:
-        _section("\U0001f4da", "Use Cases")
+        _section("menu_book", "Use Cases")
         for uc, name in [
             ("UC-101", "Generate Fair Recourse"),
             ("UC-102", "Set Fairness Constraint"),
@@ -2001,7 +2062,7 @@ def page_about():
             )
 
         st.markdown("<br/>", unsafe_allow_html=True)
-        _section("\U0001f4d6", "Key References")
+        _section("auto_stories", "Key References")
         refs = [
             ("Barrainkua et al., 2025", "Who Pays for Fairness? Rethinking Recourse under Social Burden"),
             ("Wang et al., 2024", "Achieving Fairness via Actionable Recourse"),
@@ -2018,7 +2079,7 @@ def page_about():
             )
 
         st.markdown("<br/>", unsafe_allow_html=True)
-        _section("\U0001f464", "Author")
+        _section("person", "Author")
         st.markdown(
             '<div class="glass-card" style="text-align:center;padding:28px;">'
             '<div style="font-size:20px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">Aqdhas Ali</div>'
@@ -2030,7 +2091,7 @@ def page_about():
         )
 
         st.markdown("<br/>", unsafe_allow_html=True)
-        _section("\U0001f517", "Quick Links")
+        _section("link", "Quick Links")
         st.markdown(
             '<div class="glass-card">'
             '<div style="padding:6px 0;"><span style="color:var(--text-muted);font-size:13px;">API Docs:</span> '
