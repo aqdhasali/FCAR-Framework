@@ -98,10 +98,29 @@ div, span, a, p, td, th {
     background: transparent !important;
 }
 
+/* ─── Sidebar always visible — hide collapse/expand controls ─── */
+[data-testid="collapsedControl"] {
+    display: none !important;
+}
+[data-testid="stSidebar"] button[kind="headerNoPadding"],
+[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
+[data-testid="stSidebar"] {
+    transform: none !important;
+    width: 310px !important;
+    min-width: 310px !important;
+}
+
 /* ─── Sidebar ─── */
 [data-testid="stSidebar"] {
     background: var(--bg) !important;
     border-right: 1px solid var(--border) !important;
+}
+/* Center sidebar logo */
+[data-testid="stSidebar"] [data-testid="stImage"] {
+    display: flex !important;
+    justify-content: center !important;
 }
 [data-testid="stSidebar"] hr {
     border-color: var(--border) !important;
@@ -893,7 +912,7 @@ def main():
     logo_path = ROOT / "assets" / "logo.png"
     if logo_path.exists():
         try:
-            st.sidebar.image(str(logo_path), use_container_width=True)
+            st.sidebar.image(str(logo_path), width=180)
         except Exception:
             # Fallback if image is invalid
             st.sidebar.markdown(
