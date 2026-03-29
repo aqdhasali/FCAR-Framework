@@ -1,0 +1,91 @@
+Timestamp,Employment_Sector,Monthly_Income_Band,Recourse_Cost_Difficulty,Feasible_Income_Increase,Most_Realistic_Action,Explanation_Preference,Burden_Acceptability,Most_Important_Factor
+11/9/2025 8:57:55,Private Sector (Corporate/IT/Finance),LKR 50000-100000,5,5-10%,Opening a new fixed deposit account,Prescriptive,Yes accurate,Transparency
+11/9/2025 12:14:46,Private Sector (Corporate/IT/Finance),LKR 50000-100000,3,<5%,Reducing credit card utilization,Prescriptive,No (<10% disparity),Speed
+11/9/2025 12:15:50,Unemployed/Student,Below LKR 50000,3,<5%,Increasing formal education,Prescriptive,Yes accurate,Affordability
+11/9/2025 12:25:34,Private Sector (Corporate/IT/Finance),LKR 50000-100000,4,5-10%,Opening a new fixed deposit account,Prescriptive,Unsure,Transparency
+11/9/2025 12:30:22,Small Business Owner/Entrepreneur,LKR 50000-100000,3,5-10%,Changing employment sector,Descriptive,No (<10% disparity),Speed
+11/9/2025 12:31:26,Private Sector (Corporate/IT/Finance),Below LKR 50000,1,10-20%,Reducing credit card utilization,Descriptive,Yes accurate,Transparency
+11/9/2025 12:35:36,Unemployed/Student,Below LKR 50000,4,5-10%,Reducing credit card utilization,Prescriptive,Yes accurate,
+11/9/2025 12:36:28,Unemployed/Student,LKR 50000-100000,4,10-20%,Reducing credit card utilization,Prescriptive,Yes accurate,
+11/9/2025 12:37:13,Unemployed/Student,LKR 100001-200000,4,5-10%,Reducing credit card utilization,Prescriptive,No (<10% disparity),
+11/9/2025 12:37:45,Small Business Owner/Entrepreneur,LKR 100001-200000,4,5-10%,Changing employment sector,Prescriptive,Yes accurate,
+11/9/2025 12:38:14,Private Sector (Corporate/IT/Finance),LKR 50000-100000,4,10-20%,Opening a new fixed deposit account,Prescriptive,Unsure,
+11/9/2025 12:38:21,Private Sector (Corporate/IT/Finance),LKR 50000-100000,3,5-10%,Increasing formal education,Prescriptive,Yes accurate,Transparency
+11/9/2025 12:38:39,Unemployed/Student,LKR 100001-200000,3,5-10%,Changing employment sector,Prescriptive,Mixed,
+11/9/2025 12:39:25,Unemployed/Student,Below LKR 50000,1,10-20%,Reducing credit card utilization,Prescriptive,Unsure,
+11/9/2025 12:40:26,Unemployed/Student,Below LKR 50000,2,>20%,Reducing credit card utilization,Prescriptive,Yes accurate,Transparency
+11/9/2025 12:41:01,Unemployed/Student,LKR 50000-100000,3,>20%,Increasing formal education,Prescriptive,Yes accurate,Transparency
+11/9/2025 12:41:40,Small Business Owner/Entrepreneur,LKR 100001-200000,3,10-20%,Reducing credit card utilization,Prescriptive,Yes accurate,Transparency
+11/9/2025 12:42:20,Unemployed/Student,LKR 50000-100000,3,5-10%,Reducing credit card utilization,Prescriptive,No (<10% disparity),Affordability
+11/9/2025 12:42:43,Unemployed/Student,LKR 100001-200000,3,>20%,Changing employment sector,Prescriptive,Mixed,
+11/9/2025 12:43:01,Unemployed/Student,Below LKR 50000,3,>20%,Changing employment sector,Prescriptive,No (<10% disparity),
+11/9/2025 12:43:33,Private Sector (Corporate/IT/Finance),Above LKR 200000,3,5-10%,Opening a new fixed deposit account,Prescriptive,Unsure,Transparency
+11/9/2025 12:44:11,Unemployed/Student,Below LKR 50000,2,<5%,Changing employment sector,,Yes accurate,
+11/9/2025 12:44:40,Small Business Owner/Entrepreneur,LKR 50000-100000,3,>20%,Reducing credit card utilization,Prescriptive,Yes accurate,
+11/9/2025 12:45:01,Private Sector (Corporate/IT/Finance),LKR 50000-100000,5,10-20%,Changing employment sector,Prescriptive,Yes accurate,
+11/9/2025 12:45:19,Unemployed/Student,Below LKR 50000,5,>20%,Changing employment sector,Prescriptive,Unsure,
+11/9/2025 12:45:44,Unemployed/Student,Below LKR 50000,5,>20%,Increasing formal education,Prescriptive,Yes accurate,
+11/9/2025 12:46:03,Public Sector/Government,Below LKR 50000,4,<5%,Reducing credit card utilization,Prescriptive,Yes accurate,
+11/9/2025 12:46:10,Private Sector (Corporate/IT/Finance),LKR 100001-200000,3,5-10%,Reducing credit card utilization,Prescriptive,Yes accurate,
+11/9/2025 12:46:49,Unemployed/Student,Above LKR 200000,4,10-20%,Reducing credit card utilization,Prescriptive,Mixed,Speed
+11/9/2025 12:47:12,Private Sector (Corporate/IT/Finance),Above LKR 200000,3,<5%,Increasing formal education,Descriptive,No (<10% disparity),
+11/9/2025 12:47:36,Private Sector (Corporate/IT/Finance),Above LKR 200000,3,<5%,Changing employment sector,Prescriptive,Yes accurate,
+11/9/2025 12:47:47,Unemployed/Student,Below LKR 50000,5,>20%,Increasing formal education,Descriptive,Yes accurate,
+11/9/2025 12:48:07,Private Sector (Corporate/IT/Finance),Above LKR 200000,4,5-10%,Reducing credit card utilization,Prescriptive,No (<10% disparity),
+11/9/2025 12:48:09,Small Business Owner/Entrepreneur,LKR 50000-100000,3,10-20%,Increasing formal education,Prescriptive,Unsure,
+11/9/2025 12:48:46,Unemployed/Student,LKR 50000-100000,4,5-10%,Changing employment sector,Prescriptive,Yes accurate,
+11/9/2025 12:48:59,Unemployed/Student,Below LKR 50000,4,>20%,Increasing formal education,Prescriptive,Yes accurate,Transparency
+11/9/2025 12:49:07,Unemployed/Student,LKR 50000-100000,3,10-20%,Changing employment sector,Prescriptive,No (<10% disparity),
+11/9/2025 12:49:42,Small Business Owner/Entrepreneur,Above LKR 200000,3,5-10%,Changing employment sector,Prescriptive,Yes accurate,
+11/9/2025 12:49:59,Small Business Owner/Entrepreneur,Above LKR 200000,4,10-20%,Changing employment sector,Prescriptive,Yes accurate,
+11/9/2025 12:50:18,Small Business Owner/Entrepreneur,Above LKR 200000,5,5-10%,Increasing formal education,Prescriptive,Yes accurate,
+11/9/2025 12:50:38,Private Sector (Corporate/IT/Finance),Above LKR 200000,3,5-10%,Increasing formal education,Prescriptive,Yes accurate,
+11/9/2025 12:50:40,Small Business Owner/Entrepreneur,Above LKR 200000,1,<5%,Opening a new fixed deposit account,Descriptive,No (<10% disparity),Speed
+11/9/2025 12:50:57,Unemployed/Student,Below LKR 50000,4,5-10%,Increasing formal education,Prescriptive,No (<10% disparity),
+11/9/2025 12:51:18,Small Business Owner/Entrepreneur,Above LKR 200000,4,5-10%,Changing employment sector,Prescriptive,Unsure,
+11/9/2025 12:51:40,Unemployed/Student,Below LKR 50000,5,<5%,Increasing formal education,Prescriptive,Yes accurate,Affordability
+11/9/2025 12:51:46,Private Sector (Corporate/IT/Finance),Above LKR 200000,3,10-20%,Opening a new fixed deposit account,Prescriptive,Unsure,
+11/9/2025 12:52:04,Unemployed/Student,LKR 100001-200000,4,<5%,Changing employment sector,Prescriptive,Yes accurate,
+11/9/2025 12:52:23,Unemployed/Student,LKR 50000-100000,4,10-20%,Opening a new fixed deposit account,Prescriptive,Yes accurate,
+11/9/2025 12:52:37,Private Sector (Corporate/IT/Finance),LKR 100001-200000,4,>20%,Increasing formal education,Prescriptive,Unsure,
+11/9/2025 12:52:50,Small Business Owner/Entrepreneur,LKR 100001-200000,4,5-10%,Changing employment sector,Prescriptive,No (<10% disparity),
+11/9/2025 12:56:33,Private Sector (Corporate/IT/Finance),Below LKR 50000,3,10-20%,Reducing credit card utilization,Prescriptive,Yes accurate,Transparency
+11/9/2025 12:58:16,Small Business Owner/Entrepreneur,Below LKR 50000,2,5-10%,Opening a new fixed deposit account,Prescriptive,No (<10% disparity),Speed
+11/9/2025 12:59:08,Unemployed/Student,Below LKR 50000,5,<5%,Increasing formal education,Prescriptive,No (<10% disparity),
+11/9/2025 13:18:44,Small Business Owner/Entrepreneur,Below LKR 50000,3,5-10%,Reducing credit card utilization,Descriptive,No (<10% disparity),Speed
+11/9/2025 13:19:30,Private Sector (Corporate/IT/Finance),LKR 50000-100000,3,<5%,Changing employment sector,Prescriptive,Yes accurate,Affordability
+11/9/2025 13:20:39,Small Business Owner/Entrepreneur,LKR 50000-100000,3,<5%,Changing employment sector,Descriptive,Unsure,Speed
+11/9/2025 13:21:21,Private Sector (Corporate/IT/Finance),LKR 100001-200000,3,5-10%,Reducing credit card utilization,Descriptive,Unsure,Transparency
+11/9/2025 13:21:46,Small Business Owner/Entrepreneur,Below LKR 50000,3,<5%,Changing employment sector,Descriptive,Unsure,Speed
+11/9/2025 13:22:21,Private Sector (Corporate/IT/Finance),Below LKR 50000,3,<5%,Increasing formal education,Descriptive,Unsure,Affordability
+11/9/2025 13:22:52,Private Sector (Corporate/IT/Finance),LKR 50000-100000,3,<5%,Changing employment sector,Descriptive,Yes accurate,Speed
+11/9/2025 13:23:18,Small Business Owner/Entrepreneur,Below LKR 50000,4,<5%,Changing employment sector,Descriptive,Yes accurate,Affordability
+11/9/2025 13:34:54,Small Business Owner/Entrepreneur,LKR 50000-100000,3,5-10%,Changing employment sector,Prescriptive,Unsure,
+11/9/2025 13:43:47,Unemployed/Student,LKR 50000-100000,3,10-20%,Reducing credit card utilization,Descriptive,Yes accurate,Transparency
+11/9/2025 13:44:35,Small Business Owner/Entrepreneur,LKR 100001-200000,4,10-20%,Reducing credit card utilization,Descriptive,No (<10% disparity),Speed
+11/9/2025 13:45:25,Private Sector (Corporate/IT/Finance),Above LKR 200000,2,10-20%,Reducing credit card utilization,Descriptive,Unsure,Transparency
+11/9/2025 13:45:57,Public Sector/Government,LKR 50000-100000,4,10-20%,Opening a new fixed deposit account,Prescriptive,Yes accurate,Speed
+11/9/2025 13:46:33,Small Business Owner/Entrepreneur,LKR 100001-200000,3,10-20%,Reducing credit card utilization,Descriptive,Unsure,Transparency
+11/9/2025 13:48:29,Private Sector (Corporate/IT/Finance),Below LKR 50000,4,5-10%,Reducing credit card utilization,Prescriptive,No (<10% disparity),Transparency
+11/9/2025 13:59:22,Private Sector (Corporate/IT/Finance),Below LKR 50000,4,<5%,Opening a new fixed deposit account,Prescriptive,Mixed,
+11/9/2025 13:59:42,Public Sector/Government,Above LKR 200000,3,5-10%,Reducing credit card utilization,Prescriptive,No (<10% disparity),
+11/9/2025 14:00:08,Private Sector (Corporate/IT/Finance),LKR 100001-200000,5,5-10%,Changing employment sector,Prescriptive,Unsure,
+11/9/2025 14:50:01,Private Sector (Corporate/IT/Finance),LKR 100001-200000,4,5-10%,Changing employment sector,Descriptive,Mixed,Transparency
+11/9/2025 14:50:44,Small Business Owner/Entrepreneur,LKR 50000-100000,4,<5%,Reducing credit card utilization,Prescriptive,No (<10% disparity),Affordability
+11/9/2025 14:51:28,Private Sector (Corporate/IT/Finance),Above LKR 200000,2,<5%,Opening a new fixed deposit account,Descriptive,Yes accurate,Transparency
+11/9/2025 14:52:07,Private Sector (Corporate/IT/Finance),LKR 100001-200000,3,<5%,Reducing credit card utilization,Descriptive,Yes accurate,Affordability
+11/9/2025 14:52:47,Private Sector (Corporate/IT/Finance),Above LKR 200000,1,<5%,Increasing formal education,Descriptive,Yes accurate,Transparency
+11/9/2025 15:15:48,Private Sector (Corporate/IT/Finance),LKR 100001-200000,3,5-10%,Changing employment sector,Prescriptive,Yes accurate,
+11/9/2025 15:24:36,Private Sector (Corporate/IT/Finance),LKR 50000-100000,4,5-10%,Changing employment sector,Descriptive,Yes accurate,Transparency
+11/9/2025 15:25:08,Private Sector (Corporate/IT/Finance),LKR 100001-200000,2,10-20%,Reducing credit card utilization,Prescriptive,Unsure,
+11/9/2025 16:55:02,Unemployed/Student,Below LKR 50000,3,5-10%,Opening a new fixed deposit account,Prescriptive,Yes accurate,
+11/9/2025 17:49:42,Private Sector (Corporate/IT/Finance),LKR 50000-100000,4,<5%,Opening a new fixed deposit account,Prescriptive,Mixed,Affordability
+11/9/2025 18:31:31,Unemployed/Student,Below LKR 50000,2,5-10%,Changing employment sector,Descriptive,Unsure,Transparency
+11/9/2025 20:42:10,Small Business Owner/Entrepreneur,Below LKR 50000,2,10-20%,Opening a new fixed deposit account,Descriptive,No (<10% disparity),
+11/9/2025 20:42:32,Unemployed/Student,LKR 100001-200000,1,>20%,Increasing formal education,Descriptive,No (<10% disparity),
+11/9/2025 20:43:09,Private Sector (Corporate/IT/Finance),LKR 100001-200000,1,>20%,Opening a new fixed deposit account,Prescriptive,Unsure,
+11/9/2025 20:43:38,Small Business Owner/Entrepreneur,Below LKR 50000,4,>20%,Changing employment sector,Prescriptive,Unsure,
+11/9/2025 22:02:21,Private Sector (Corporate/IT/Finance),Below LKR 50000,5,>20%,Reducing credit card utilization,Prescriptive,No (<10% disparity),Transparency
+11/10/2025 0:55:18,Private Sector (Corporate/IT/Finance),LKR 100001-200000,4,5-10%,Reducing credit card utilization,Prescriptive,Yes accurate,Transparency
+11/11/2025 22:26:29,Private Sector (Corporate/IT/Finance),LKR 100001-200000,1,10-20%,Increasing formal education,Prescriptive,Unsure,
+12/4/2025 7:00:05,Small Business Owner/Entrepreneur,Above LKR 200000,2,>20%,Opening a new fixed deposit account,Prescriptive,Unsure,Transparency

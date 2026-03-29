@@ -1,0 +1,7 @@
+{
+  "dataset": "adult",
+  "train_rows": 24129,
+  "test_rows": 6033,
+  "pos_rate_train": 0.24891209747606616,
+  "pos_rate_test": 0.24896403116194266
+}

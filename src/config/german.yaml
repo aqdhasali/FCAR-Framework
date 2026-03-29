@@ -1,0 +1,99 @@
+# German Credit Dataset - FCAR Configuration
+# Based on UCI German Credit Data (Statlog)
+# Survey-derived bounds: 87 respondents, Nov 2025
+
+dataset: german
+description: "German Credit risk classification (good/bad)"
+label_positive: 1  # 1 = good credit
+label_info: "Class 1 = good, Class 2 = bad (recoded: 1=good, 0=bad)"
+
+# ---- Mutable Numeric Features ----
+# These can be changed by recourse; each has direction, bounds, and cost weight.
+mutable_numeric:
+  duration:
+    description: "Loan duration in months"
+    direction: decrease       # can only shorten the loan
+    max_decrease: 48          # at most 48 months shorter
+    integer: true
+    cost_weight: 1.0
+
+  credit_amount:
+    description: "Loan amount in DM"
+    direction: decrease       # can only reduce the amount
+    max_rel_decrease: 0.80    # at most 80% reduction
+    integer: true
+    cost_weight: 1.0
+
+  installment_commitment:
+    description: "Installment rate as % of disposable income (1-4)"
+    direction: auto           # solver picks direction that helps
+    integer: true
+    cost_weight: 1.0
+
+  existing_credits:
+    description: "Number of existing credits at this bank"
+    direction: auto
+    integer: true
+    cost_weight: 1.0
+
+  residence_since:
+    description: "Years at current residence (1-4)"
+    direction: auto
+    integer: true
+    cost_weight: 1.0
+
+# ---- Mutable Categorical Features ----
+# Ordered categories with monotonic improvement constraint.
+max_cat_changes: 1  # at most 1 categorical feature may change per recourse plan
+
+mutable_categorical:
+  checking_status:
+    description: "Status of existing checking account"
+    order: ["A11", "A12", "A13", "A14"]
+    # A11: < 0 DM, A12: 0-200 DM, A13: >= 200 DM, A14: no checking account
+    monotonic: true   # can only improve (move up in order)
+    step_weight: 0.25
+
+  savings_status:
+    description: "Savings account/bonds status"
+    order: ["A61", "A62", "A63", "A64", "A65"]
+    # A61: < 100 DM, A62: 100-500, A63: 500-1000, A64: >= 1000, A65: unknown/none
+    monotonic: true
+    step_weight: 0.25
+
+# ---- Immutable Features ----
+# These cannot be changed by recourse (protected or structurally fixed).
+immutable:
+  - personal_status    # contains sex info - protected
+  - age                # protected attribute
+  - foreign_worker     # protected attribute
+  - credit_history     # historical, cannot be rewritten
+  - purpose            # already decided
+  - other_parties      # third party involvement
+  - property_magnitude # asset type
+  - housing            # housing type
+  - job                # job category (short-term immutable)
+  - own_telephone
+  - num_dependents
+  - other_payment_plans
+  - employment         # broadly immutable in short term
+
+# ---- Sensitive Attributes ----
+# Used for fairness slicing (not in feature set directly).
+sensitive_attributes:
+  - age_bucket     # derived from age: [le25, 26-40, 41-60, 60+]
+  - sex            # derived from personal_status
+
+# ---- Survey-Derived Plausibility Bounds ----
+survey_bounds:
+  max_feasible_income_increase: 0.10    # median from survey: 5-10%, use upper bound
+  income_increase_implausible: 0.20     # >20% flagged as highly infeasible
+  fairness_disparity_epsilon: 0.10      # 61% demand <10% disparity
+  mean_difficulty_score: 3.4            # mean on 1-5 scale
+  source: "Survey of 87 respondents, Nov 2025"
+
+# ---- Solver Settings ----
+solver:
+  slack_penalty: 1000.0
+  margin: 1e-6
+  time_limit_seconds: 30    # NFR02: recourse < 30s

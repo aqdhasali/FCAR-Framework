@@ -1,0 +1,108 @@
+{
+  "dataset": "adult",
+  "group_col": "sex",
+  "n_rejected": 3883,
+  "n_evaluated": 200,
+  "fcar_overrides": {
+    "Female": {
+      "num": {
+        "education-num": 2.0,
+        "hours-per-week": 1.0,
+        "capital-gain": 0.75,
+        "capital-loss": 1.0
+      },
+      "cat": {
+        "workclass": 5.0,
+        "occupation": 5.0
+      }
+    }
+  },
+  "unconstrained_ar": {
+    "feasible_rate": 1.0,
+    "flip_rate": 1.0,
+    "avg_burden": 0.122606,
+    "social_burden": {
+      "Female": 0.147288,
+      "Male": 0.105097
+    },
+    "disparity": {
+      "max_burden": 0.14728809938701798,
+      "min_burden": 0.10509669199256096,
+      "gap": 0.04219140739445702,
+      "ratio": 1.4014532388654388,
+      "worst_group": "Female",
+      "best_group": "Male"
+    },
+    "audit": {
+      "audit_score": 0.0,
+      "gap": 0.042191,
+      "mean_burden": 0.126192,
+      "threshold": 0.012619,
+      "passed": false,
+      "worst_group": "Female",
+      "best_group": "Male"
+    }
+  },
+  "fcar": {
+    "feasible_rate": 1.0,
+    "flip_rate": 1.0,
+    "avg_burden": 0.061303,
+    "social_burden": {
+      "Female": 0.073644,
+      "Male": 0.052548
+    },
+    "disparity": {
+      "max_burden": 0.07364404969350899,
+      "min_burden": 0.05254834599628048,
+      "gap": 0.02109570369722851,
+      "ratio": 1.4014532388654388,
+      "worst_group": "Female",
+      "best_group": "Male"
+    },
+    "audit": {
+      "audit_score": 0.0,
+      "gap": 0.021096,
+      "mean_burden": 0.063096,
+      "threshold": 0.00631,
+      "passed": false,
+      "worst_group": "Female",
+      "best_group": "Male"
+    }
+  },
+  "statistical_tests": {
+    "overall_wilcoxon": {
+      "statistic": 0.0,
+      "p_value": 0.0,
+      "significant_at_005": true,
+      "n_pairs": 200,
+      "mean_diff": 0.061303,
+      "median_diff": 0.057278
+    },
+    "disparity_reduction": {
+      "ar_burden_gap": 0.042191,
+      "fcar_burden_gap": 0.021096,
+      "gap_reduction": 0.021096,
+      "gap_reduction_pct": 50.0
+    },
+    "per_group": {
+      "Female": {
+        "ar_mean_burden": 0.147288,
+        "fcar_mean_burden": 0.073644,
+        "change_pct": -50.0,
+        "mann_whitney_U": 5584.0,
+        "p_value": 0.0,
+        "n_ar": 83,
+        "n_fcar": 83
+      },
+      "Male": {
+        "ar_mean_burden": 0.105097,
+        "fcar_mean_burden": 0.052548,
+        "change_pct": -50.0,
+        "mann_whitney_U": 9511.0,
+        "p_value": 0.0,
+        "n_ar": 117,
+        "n_fcar": 117
+      }
+    }
+  }
+}

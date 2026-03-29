@@ -1,0 +1,85 @@
+# Adult Income Dataset - FCAR Configuration
+# Based on UCI Adult (Census Income) Dataset
+# Survey-derived bounds: 87 respondents, Nov 2025
+
+dataset: adult
+description: "Adult Income classification (>50K / <=50K)"
+label_positive: 1 # 1 = >50K
+label_info: ">50K = 1 (positive/approved), <=50K = 0 (negative/denied)"
+
+# ---- Mutable Numeric Features ----
+mutable_numeric:
+  education-num:
+    description: "Years of education (numeric encoding)"
+    direction: increase # can only increase education
+    max_increase: 4 # at most 4 more years (e.g., bachelor's to PhD)
+    integer: true
+    cost_weight: 2.0 # education is costly to change
+
+  hours-per-week:
+    description: "Working hours per week"
+    direction: both # can increase or decrease
+    integer: true
+    cost_weight: 1.0
+
+  capital-gain:
+    description: "Capital gains"
+    direction: increase
+    integer: true
+    cost_weight: 1.5
+
+  capital-loss:
+    description: "Capital losses"
+    direction: decrease # reducing losses helps
+    integer: true
+    cost_weight: 1.0
+
+# ---- Mutable Categorical Features ----
+# Survey: only 31.1% found "Changing employment sector" realistic.
+# Weights raised to reflect real-world difficulty of career/sector changes.
+# max_cat_changes: solver may change at most 1 categorical feature per plan
+# to prevent implausible combined career leaps (e.g. sector + role at once).
+max_cat_changes: 1  # at most 1 categorical feature may change per recourse plan
+
+mutable_categorical:
+  workclass:
+    description: "Employment type"
+    order: [] # no strict ordering for workclass
+    monotonic: false
+    step_weight: 5.0 # heavily penalised — sector change is costly and slow
+
+  occupation:
+    description: "Job type"
+    order: []
+    monotonic: false
+    step_weight: 5.0 # heavily penalised — role change requires retraining
+
+# ---- Immutable Features ----
+immutable:
+  - age # protected attribute
+  - race # protected attribute
+  - sex # protected attribute
+  - native-country # protected / structurally fixed
+  - relationship # derivative of marital status
+  - marital-status # life event, not an actionable recourse step
+  - fnlwgt # census weight, not a real feature
+  - education # redundant with education-num
+
+# ---- Sensitive Attributes ----
+sensitive_attributes:
+  - sex
+  - race
+
+# ---- Survey-Derived Plausibility Bounds ----
+survey_bounds:
+  max_feasible_income_increase: 0.10
+  income_increase_implausible: 0.20
+  fairness_disparity_epsilon: 0.10
+  mean_difficulty_score: 3.4
+  source: "Survey of 87 respondents, Nov 2025"
+
+# ---- Solver Settings ----
+solver:
+  slack_penalty: 1000.0
+  margin: 1e-6
+  time_limit_seconds: 30

@@ -1,0 +1,144 @@
+{
+  "dataset": "german",
+  "group_col": "age_bucket",
+  "n_rejected": 89,
+  "n_evaluated": 89,
+  "fcar_overrides": {
+    "41-60": {
+      "num": {
+        "duration": 0.3117,
+        "credit_amount": 0.2073,
+        "installment_commitment": 0.8912,
+        "existing_credits": 1.0,
+        "residence_since": 1.0
+      },
+      "cat": {
+        "checking_status": 0.25,
+        "savings_status": 0.25
+      }
+    },
+    "<=25": {
+      "num": {
+        "duration": 0.8928,
+        "credit_amount": 0.9993,
+        "installment_commitment": 0.608,
+        "existing_credits": 1.0,
+        "residence_since": 1.0
+      },
+      "cat": {
+        "checking_status": 0.25,
+        "savings_status": 0.25
+      }
+    }
+  },
+  "unconstrained_ar": {
+    "feasible_rate": 1.0,
+    "flip_rate": 1.0,
+    "avg_burden": 0.183239,
+    "social_burden": {
+      "41-60": 0.265902,
+      "<=25": 0.159052,
+      "26-40": 0.15442,
+      "60+": 0.052768
+    },
+    "disparity": {
+      "max_burden": 0.2659019052212059,
+      "min_burden": 0.0527676901067459,
+      "gap": 0.21313421511445999,
+      "ratio": 5.039104510417305,
+      "worst_group": "41-60",
+      "best_group": "60+"
+    },
+    "audit": {
+      "audit_score": 0.0,
+      "gap": 0.213134,
+      "mean_burden": 0.158035,
+      "threshold": 0.015804,
+      "passed": false,
+      "worst_group": "41-60",
+      "best_group": "60+"
+    }
+  },
+  "fcar": {
+    "feasible_rate": 1.0,
+    "flip_rate": 1.0,
+    "avg_burden": 0.148485,
+    "social_burden": {
+      "<=25": 0.155055,
+      "26-40": 0.15442,
+      "41-60": 0.140352,
+      "60+": 0.052768
+    },
+    "disparity": {
+      "max_burden": 0.15505460043101865,
+      "min_burden": 0.0527676901067459,
+      "gap": 0.10228691032427276,
+      "ratio": 2.938438277615571,
+      "worst_group": "<=25",
+      "best_group": "60+"
+    },
+    "audit": {
+      "audit_score": 0.0,
+      "gap": 0.102287,
+      "mean_burden": 0.125649,
+      "threshold": 0.012565,
+      "passed": false,
+      "worst_group": "<=25",
+      "best_group": "60+"
+    }
+  },
+  "statistical_tests": {
+    "overall_wilcoxon": {
+      "statistic": 201.0,
+      "p_value": 0.008352,
+      "significant_at_005": true,
+      "n_pairs": 89,
+      "mean_diff": 0.034754,
+      "median_diff": 0.0
+    },
+    "disparity_reduction": {
+      "ar_burden_gap": 0.213134,
+      "fcar_burden_gap": 0.102287,
+      "gap_reduction": 0.110847,
+      "gap_reduction_pct": 52.01
+    },
+    "per_group": {
+      "26-40": {
+        "ar_mean_burden": 0.15442,
+        "fcar_mean_burden": 0.15442,
+        "change_pct": 0.0,
+        "mann_whitney_U": 924.5,
+        "p_value": 1.0,
+        "n_ar": 43,
+        "n_fcar": 43
+      },
+      "41-60": {
+        "ar_mean_burden": 0.265902,
+        "fcar_mean_burden": 0.140352,
+        "change_pct": -47.22,
+        "mann_whitney_U": 347.0,
+        "p_value": 0.227671,
+        "n_ar": 24,
+        "n_fcar": 24
+      },
+      "60+": {
+        "ar_mean_burden": 0.052768,
+        "fcar_mean_burden": 0.052768,
+        "change_pct": 0.0,
+        "mann_whitney_U": 2.0,
+        "p_value": 1.0,
+        "n_ar": 2,
+        "n_fcar": 2
+      },
+      "<=25": {
+        "ar_mean_burden": 0.159052,
+        "fcar_mean_burden": 0.155055,
+        "change_pct": -2.51,
+        "mann_whitney_U": 191.0,
+        "p_value": 0.817441,
+        "n_ar": 20,
+        "n_fcar": 20
+      }
+    }
+  }
+}

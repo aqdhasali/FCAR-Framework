@@ -1,0 +1,104 @@
+{
+  "recourse_cost_difficulty": {
+    "n": 90,
+    "mean": 3.29,
+    "median": 3.0,
+    "std": 1.05,
+    "distribution": {
+      "1": 7,
+      "2": 9,
+      "3": 35,
+      "4": 29,
+      "5": 10
+    },
+    "interpretation": "Mean difficulty of 3.3/5 indicates paying down LKR 100K debt in 6 months is perceived as moderately to very difficult by respondents."
+  },
+  "feasible_income_increase": {
+    "distribution": {
+      "10-20%": 21,
+      "5-10%": 32,
+      "<5%": 22,
+      ">20%": 15
+    },
+    "median_band": "5-10%",
+    "numeric_midpoints_mean": 0.1094,
+    "numeric_midpoints_median": 0.075,
+    "constraint_recommendation": "The median feasible income increase is 5-10%. Recourse suggestions requiring >20% income increase should be flagged as implausible."
+  },
+  "realistic_actions": {
+    "distribution": {
+      "Reducing credit card utilization": 28,
+      "Changing employment sector": 28,
+      "Increasing formal education": 18,
+      "Opening a new fixed deposit account": 16
+    },
+    "percentages": {
+      "Reducing credit card utilization": 31.1,
+      "Changing employment sector": 31.1,
+      "Increasing formal education": 20.0,
+      "Opening a new fixed deposit account": 17.8
+    },
+    "top_action": "Reducing credit card utilization",
+    "interpretation": "Respondents ranked 'Reducing credit card utilization' as the most realistic short-term action (31%), suggesting recourse policies should prioritize this type of feature change."
+  },
+  "explanation_preference": {
+    "prescriptive": 65,
+    "descriptive": 24,
+    "other_or_missing": 0,
+    "prescriptive_pct": 73.0,
+    "descriptive_pct": 27.0,
+    "interpretation": "73% of respondents preferred prescriptive (actionable) explanations, strongly validating the need for Actionable Recourse over descriptive XAI."
+  },
+  "burden_acceptability": {
+    "distribution": {
+      "acceptable_if_accurate": 40,
+      "unacceptable_lt10pct": 21,
+      "unsure": 29,
+      "mixed": 0
+    },
+    "total_responses": 90,
+    "demand_strict_fairness_pct": 23.3,
+    "constraint_recommendation": "23% of respondents demand burden disparity < 10% or expressed mixed views. Setting epsilon=0.10 (10% relative disparity tolerance) is justified by this result."
+  },
+  "most_important_factor": {
+    "distribution": {
+      "Transparency": 23,
+      "Speed": 11,
+      "Affordability": 9
+    },
+    "top_factor": "Transparency"
+  },
+  "difficulty_by_income": {
+    "Above LKR 200000": {
+      "n": 17,
+      "mean_difficulty": 2.94,
+      "median_difficulty": 3.0
+    },
+    "Below LKR 50000": {
+      "n": 28,
+      "mean_difficulty": 3.39,
+      "median_difficulty": 3.5
+    },
+    "LKR 100001-200000": {
+      "n": 21,
+      "mean_difficulty": 3.14,
+      "median_difficulty": 3.0
+    },
+    "LKR 50000-100000": {
+      "n": 24,
+      "mean_difficulty": 3.54,
+      "median_difficulty": 3.0
+    }
+  },
+  "derived_plausibility_constraints": {
+    "max_feasible_income_increase_pct": 0.1,
+    "income_increase_implausible_threshold": 0.2,
+    "fairness_disparity_epsilon": 0.1,
+    "difficulty_threshold": 3.3,
+    "source": "Survey of 87 respondents (Nov 2025)",
+    "justification": {
+      "income_constraint": "The median feasible income increase is 5-10%. Recourse suggestions requiring >20% income increase should be flagged as implausible.",
+      "fairness_epsilon": "23% of respondents demand burden disparity < 10% or expressed mixed views. Setting epsilon=0.10 (10% relative disparity tolerance) is justified by this result."
+    }
+  }
+}

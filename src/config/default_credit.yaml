@@ -1,0 +1,95 @@
+# Default Credit Card Dataset - FCAR Configuration
+# Based on UCI Default of Credit Card Clients Dataset
+# Survey-derived bounds: 87 respondents, Nov 2025
+
+dataset: default_credit
+description: "Credit card default prediction"
+label_positive: 0  # 0 = no default (positive/good outcome)
+label_info: "0 = no default (positive), 1 = default (negative)"
+
+# ---- Mutable Numeric Features ----
+mutable_numeric:
+  LIMIT_BAL:
+    description: "Given credit limit (NT dollar)"
+    direction: both
+    integer: true
+    cost_weight: 1.0
+
+  PAY_0:
+    description: "Repayment status in September (-1=pay duly, 1-9=months delay)"
+    direction: decrease       # lower = better payment history
+    max_decrease: 3           # can improve by at most 3 months of delay
+    integer: true
+    cost_weight: 1.5
+
+  PAY_2:
+    description: "Repayment status in August"
+    direction: decrease
+    max_decrease: 3
+    integer: true
+    cost_weight: 1.5
+
+  BILL_AMT1:
+    description: "Bill statement amount in September (NT dollar)"
+    direction: decrease       # reducing bills helps
+    integer: true
+    cost_weight: 1.0
+
+  PAY_AMT1:
+    description: "Previous payment amount in September (NT dollar)"
+    direction: increase       # paying more helps
+    integer: true
+    cost_weight: 1.0
+
+  PAY_AMT2:
+    description: "Previous payment amount in August (NT dollar)"
+    direction: increase
+    integer: true
+    cost_weight: 1.0
+
+  EDUCATION:
+    description: "Education level (1=grad, 2=university, 3=high school, 4=other)"
+    direction: decrease   # 1 is best, so decreasing number is improving
+    integer: true
+    cost_weight: 0.5
+
+# ---- Mutable Categorical Features ----
+mutable_categorical: {}
+
+# ---- Immutable Features ----
+immutable:
+  - SEX                # protected attribute
+  - AGE                # protected attribute
+  - MARRIAGE           # life event, not actionable recourse
+  - PAY_3              # older payment history (structurally fixed)
+  - PAY_4
+  - PAY_5
+  - PAY_6
+  - BILL_AMT2          # older bill amounts
+  - BILL_AMT3
+  - BILL_AMT4
+  - BILL_AMT5
+  - BILL_AMT6
+  - PAY_AMT3           # older payment amounts
+  - PAY_AMT4
+  - PAY_AMT5
+  - PAY_AMT6
+
+# ---- Sensitive Attributes ----
+sensitive_attributes:
+  - SEX
+  - AGE_bucket    # derived: [le25, 26-40, 41-60, 60+]
+
+# ---- Survey-Derived Plausibility Bounds ----
+survey_bounds:
+  max_feasible_income_increase: 0.10
+  income_increase_implausible: 0.20
+  fairness_disparity_epsilon: 0.10
+  mean_difficulty_score: 3.4
+  source: "Survey of 87 respondents, Nov 2025"
+
+# ---- Solver Settings ----
+solver:
+  slack_penalty: 1000.0
+  margin: 1e-6
+  time_limit_seconds: 30

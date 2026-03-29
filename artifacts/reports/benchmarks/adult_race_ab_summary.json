@@ -1,0 +1,144 @@
+{
+  "dataset": "adult",
+  "group_col": "race",
+  "n_rejected": 3883,
+  "n_evaluated": 200,
+  "fcar_overrides": {
+    "Black": {
+      "num": {
+        "education-num": 2.0,
+        "hours-per-week": 1.0,
+        "capital-gain": 0.75,
+        "capital-loss": 1.0
+      },
+      "cat": {
+        "workclass": 5.0,
+        "occupation": 5.0
+      }
+    },
+    "White": {
+      "num": {
+        "education-num": 2.0,
+        "hours-per-week": 1.0,
+        "capital-gain": 0.75,
+        "capital-loss": 1.0
+      },
+      "cat": {
+        "workclass": 5.0,
+        "occupation": 5.0
+      }
+    }
+  },
+  "unconstrained_ar": {
+    "feasible_rate": 1.0,
+    "flip_rate": 1.0,
+    "avg_burden": 0.122606,
+    "social_burden": {
+      "Black": 0.147618,
+      "White": 0.122366,
+      "Amer-Indian-Eskimo": 0.087921,
+      "Asian-Pac-Islander": 0.067814,
+      "Other": 0.02424
+    },
+    "disparity": {
+      "max_burden": 0.14761767617676175,
+      "min_burden": 0.024240242402424023,
+      "gap": 0.12337743377433773,
+      "ratio": 6.089777227722772,
+      "worst_group": "Black",
+      "best_group": "Other"
+    },
+    "audit": {
+      "audit_score": 0.0,
+      "gap": 0.123377,
+      "mean_burden": 0.089992,
+      "threshold": 0.008999,
+      "passed": false,
+      "worst_group": "Black",
+      "best_group": "Other"
+    }
+  },
+  "fcar": {
+    "feasible_rate": 1.0,
+    "flip_rate": 1.0,
+    "avg_burden": 0.06035,
+    "social_burden": {
+      "Black": 0.073809,
+      "White": 0.061183,
+      "Amer-Indian-Eskimo": 0.02198,
+      "Asian-Pac-Islander": 0.016953,
+      "Other": 0.00606
+    },
+    "disparity": {
+      "max_burden": 0.07380883808838087,
+      "min_burden": 0.006060060600606006,
+      "gap": 0.06774877748777487,
+      "ratio": 12.179554455445544,
+      "worst_group": "Black",
+      "best_group": "Other"
+    },
+    "audit": {
+      "audit_score": 0.0,
+      "gap": 0.067749,
+      "mean_burden": 0.035997,
+      "threshold": 0.0036,
+      "passed": false,
+      "worst_group": "Black",
+      "best_group": "Other"
+    }
+  },
+  "statistical_tests": {
+    "overall_wilcoxon": {
+      "statistic": 0.0,
+      "p_value": 0.0,
+      "significant_at_005": true,
+      "n_pairs": 200,
+      "mean_diff": 0.062256,
+      "median_diff": 0.058756
+    },
+    "disparity_reduction": {
+      "ar_burden_gap": 0.123377,
+      "fcar_burden_gap": 0.067749,
+      "gap_reduction": 0.055629,
+      "gap_reduction_pct": 45.09
+    },
+    "per_group": {
+      "Amer-Indian-Eskimo": {
+        "ar_mean_burden": 0.087921,
+        "fcar_mean_burden": 0.02198,
+        "change_pct": -75.0,
+        "mann_whitney_U": 8.0,
+        "p_value": 0.2,
+        "n_ar": 3,
+        "n_fcar": 3
+      },
+      "Asian-Pac-Islander": {
+        "ar_mean_burden": 0.067814,
+        "fcar_mean_burden": 0.016953,
+        "change_pct": -75.0,
+        "mann_whitney_U": 44.0,
+        "p_value": 0.011072,
+        "n_ar": 7,
+        "n_fcar": 7
+      },
+      "Black": {
+        "ar_mean_burden": 0.147618,
+        "fcar_mean_burden": 0.073809,
+        "change_pct": -50.0,
+        "mann_whitney_U": 506.5,
+        "p_value": 0.000174,
+        "n_ar": 25,
+        "n_fcar": 25
+      },
+      "White": {
+        "ar_mean_burden": 0.122366,
+        "fcar_mean_burden": 0.061183,
+        "change_pct": -50.0,
+        "mann_whitney_U": 19561.0,
+        "p_value": 0.0,
+        "n_ar": 164,
+        "n_fcar": 164
+      }
+    }
+  }
+}

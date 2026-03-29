@@ -1,0 +1,80 @@
+{
+  "source_file": "german_age_bucket_ab_comparison.csv",
+  "group_col": "age_bucket",
+  "method_filter": "fcar",
+  "timestamp": "2026-03-15T18:15:32.867030",
+  "metrics": {
+    "n_evaluated": 10,
+    "feasible_rate": 1.0,
+    "flip_rate": 1.0
+  },
+  "disparity": {
+    "max_burden": NaN,
+    "min_burden": NaN,
+    "gap": NaN,
+    "ratio": NaN,
+    "worst_group": "",
+    "best_group": ""
+  },
+  "audit": {
+    "audit_score": 1.0,
+    "gap": 0.0,
+    "mean_burden": 0.0,
+    "threshold": 0.0,
+    "passed": true,
+    "worst_group": "",
+    "best_group": ""
+  },
+  "social_burden": [],
+  "explanations": [
+    {
+      "test_idx": 162,
+      "original_probability": 0.2452,
+      "new_probability": 0.5,
+      "burden_score": 0.2801,
+      "required_changes": [
+        "Decrease duration by 9.00",
+        "Decrease credit_amount by 2685.00"
+      ],
+      "narrative": "To overturn the rejection, the applicant must: Decrease duration by 9.00, Decrease credit_amount by 2685.00."
+    },
+    {
+      "test_idx": 145,
+      "original_probability": 0.1456,
+      "new_probability": 0.5337,
+      "burden_score": 0.0,
+      "required_changes": [],
+      "narrative": "To overturn the rejection, the applicant must: ."
+    },
+    {
+      "test_idx": 4,
+      "original_probability": 0.1764,
+      "new_probability": 0.5,
+      "burden_score": 0.0771,
+      "required_changes": [
+        "Decrease credit_amount by 1402.00"
+      ],
+      "narrative": "To overturn the rejection, the applicant must: Decrease credit_amount by 1402.00."
+    },
+    {
+      "test_idx": 77,
+      "original_probability": 0.148,
+      "new_probability": 0.5,
+      "burden_score": 0.1661,
+      "required_changes": [
+        "Decrease credit_amount by 3019.00"
+      ],
+      "narrative": "To overturn the rejection, the applicant must: Decrease credit_amount by 3019.00."
+    },
+    {
+      "test_idx": 183,
+      "original_probability": 0.4495,
+      "new_probability": 0.5,
+      "burden_score": 0.0861,
+      "required_changes": [
+        "Decrease credit_amount by 1565.00"
+      ],
+      "narrative": "To overturn the rejection, the applicant must: Decrease credit_amount by 1565.00."
+    }
+  ]
+}

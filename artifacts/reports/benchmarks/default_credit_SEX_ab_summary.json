@@ -1,0 +1,120 @@
+{
+  "dataset": "default_credit",
+  "group_col": "SEX",
+  "n_rejected": 2239,
+  "n_evaluated": 200,
+  "fcar_overrides": {
+    "2": {
+      "num": {
+        "LIMIT_BAL": 1.0,
+        "PAY_0": 1.5,
+        "PAY_2": 1.5,
+        "BILL_AMT1": 1.0,
+        "PAY_AMT1": 0.5,
+        "PAY_AMT2": 1.0,
+        "EDUCATION": 0.5
+      },
+      "cat": {}
+    },
+    "1": {
+      "num": {
+        "LIMIT_BAL": 1.0,
+        "PAY_0": 1.5,
+        "PAY_2": 1.5,
+        "BILL_AMT1": 1.0,
+        "PAY_AMT1": 1.0,
+        "PAY_AMT2": 0.5,
+        "EDUCATION": 0.5
+      },
+      "cat": {}
+    }
+  },
+  "unconstrained_ar": {
+    "feasible_rate": 1.0,
+    "flip_rate": 1.0,
+    "avg_burden": 0.05987,
+    "social_burden": {
+      "2": 0.06285,
+      "1": 0.056441
+    },
+    "disparity": {
+      "max_burden": 0.06284994258785041,
+      "min_burden": 0.05644070006540186,
+      "gap": 0.006409242522448552,
+      "ratio": 1.113557105333947,
+      "worst_group": "2",
+      "best_group": "1"
+    },
+    "audit": {
+      "audit_score": 0.0,
+      "gap": 0.006409,
+      "mean_burden": 0.059645,
+      "threshold": 0.005965,
+      "passed": false,
+      "worst_group": "2",
+      "best_group": "1"
+    }
+  },
+  "fcar": {
+    "feasible_rate": 1.0,
+    "flip_rate": 1.0,
+    "avg_burden": 0.030361,
+    "social_burden": {
+      "2": 0.031425,
+      "1": 0.029138
+    },
+    "disparity": {
+      "max_burden": 0.031425002157669704,
+      "min_burden": 0.029137525456634568,
+      "gap": 0.0022874767010351363,
+      "ratio": 1.0785062102970822,
+      "worst_group": "2",
+      "best_group": "1"
+    },
+    "audit": {
+      "audit_score": 0.2446,
+      "gap": 0.002287,
+      "mean_burden": 0.030281,
+      "threshold": 0.003028,
+      "passed": true,
+      "worst_group": "2",
+      "best_group": "1"
+    }
+  },
+  "statistical_tests": {
+    "overall_wilcoxon": {
+      "statistic": 0.0,
+      "p_value": 0.0,
+      "significant_at_005": true,
+      "n_pairs": 200,
+      "mean_diff": 0.029508,
+      "median_diff": 0.01668
+    },
+    "disparity_reduction": {
+      "ar_burden_gap": 0.006409,
+      "fcar_burden_gap": 0.002287,
+      "gap_reduction": 0.004122,
+      "gap_reduction_pct": 64.31
+    },
+    "per_group": {
+      "1": {
+        "ar_mean_burden": 0.056441,
+        "fcar_mean_burden": 0.029138,
+        "change_pct": -48.37,
+        "mann_whitney_U": 5774.0,
+        "p_value": 7.9e-05,
+        "n_ar": 93,
+        "n_fcar": 93
+      },
+      "2": {
+        "ar_mean_burden": 0.06285,
+        "fcar_mean_burden": 0.031425,
+        "change_pct": -50.0,
+        "mann_whitney_U": 7669.0,
+        "p_value": 1.8e-05,
+        "n_ar": 107,
+        "n_fcar": 107
+      }
+    }
+  }
+}
