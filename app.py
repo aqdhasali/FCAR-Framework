@@ -67,6 +67,28 @@ label, .stRadio label, .stSelectbox label,
 div, span, a, p, td, th {
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
 }
+/* Restore Material Symbols / Icons font for Streamlit's built-in icon spans */
+[data-testid="stExpander"] svg,
+[data-testid="stExpander"] span[class*="icon"],
+[data-testid="stExpander"] span[data-testid],
+[data-testid="stExpanderToggleIcon"],
+[data-testid="stExpanderToggleIcon"] *,
+.st-emotion-cache-p5msec,
+[data-testid="stExpander"] details summary svg {
+    font-family: 'Material Symbols Rounded', 'Material Icons', sans-serif !important;
+}
+/* Hide any text-based icon fallback in expanders */
+[data-testid="stExpanderToggleIcon"] {
+    font-size: 0px !important;
+    overflow: hidden !important;
+    width: 24px !important;
+    height: 24px !important;
+}
+[data-testid="stExpanderToggleIcon"] svg {
+    font-size: initial !important;
+    width: 24px !important;
+    height: 24px !important;
+}
 
 /* ─── Color Palette ─── */
 :root {
@@ -1002,7 +1024,7 @@ def main():
     elif "Audit" in page:
         page_audit(dataset)
     elif "Evaluation" in page:
-        page_evaluation()
+        page_evaluation(pipe, config)
     elif "About" in page:
         page_about()
 
@@ -1137,6 +1159,81 @@ def page_recourse(dataset, pipe, config, X_train, X_test, A_test,
         st.markdown(_score_ring(current_prob, denied), unsafe_allow_html=True)
 
     _divider()
+
+    # ── Custom Constraints (UC-106) ──
+    _section("build", "Custom Constraints")
+    st.markdown(
+        '<div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">'
+        'Optionally lock features, limit change amounts, or restrict '
+        'categorical changes before generating the recourse plan.</div>',
+        unsafe_allow_html=True,
+    )
+    custom_constraints = {"locked": [], "max_change": {}, "max_cat_changes": None}
+    mutable_num_list = get_mutable_numeric_cols(config)
+    mutable_cat_list = get_mutable_categorical_cols(config)
+
+    with st.expander("Configure Constraints", expanded=False):
+        # ── Lock features ──
+        st.markdown("**Lock Features** — prevent specific features from changing")
+        all_mutable = mutable_num_list + mutable_cat_list
+        locked = st.multiselect(
+            "Features to lock (will not change)",
+            options=all_mutable,
+            default=[],
+            format_func=lambda x: _human_feature(x),
+            help="Select features that the solver must keep at their current value.",
+        )
+        custom_constraints["locked"] = locked
+
+        st.markdown("---")
+
+        # ── Max change limits for numeric features ──
+        st.markdown("**Max Change Limits** — cap how much each numeric feature can change")
+        unlocked_num = [c for c in mutable_num_list if c not in locked]
+        if unlocked_num:
+            for feat in unlocked_num:
+                x0_val = float(applicant.get(feat, 0))
+                train_range = float(X_train[feat].max() - X_train[feat].min())
+                if train_range < 1:
+                    train_range = 1.0
+                default_max = train_range
+                spec = config.get("mutable_numeric", {}).get(feat, {})
+                # sensible ceiling from config
+                if "max_decrease" in spec:
+                    default_max = min(default_max, float(spec["max_decrease"]))
+                elif "max_rel_decrease" in spec:
+                    default_max = min(default_max, abs(x0_val * float(spec["max_rel_decrease"])))
+                user_max = st.slider(
+                    f"{_human_feature(feat)} — max change",
+                    min_value=0.0,
+                    max_value=float(round(train_range, 2)),
+                    value=float(round(default_max, 2)),
+                    step=max(0.01, round(train_range / 100, 2)),
+                    key=f"cc_{feat}",
+                )
+                if user_max < default_max - 0.01:
+                    custom_constraints["max_change"][feat] = user_max
+        else:
+            st.caption("All numeric features are locked.")
+
+        st.markdown("---")
+
+        # ── Max categorical changes ──
+        unlocked_cat = [c for c in mutable_cat_list if c not in locked]
+        default_mcc = config.get("max_cat_changes", len(unlocked_cat))
+        if unlocked_cat:
+            mcc = st.number_input(
+                "Max categorical features allowed to change",
+                min_value=0,
+                max_value=len(unlocked_cat),
+                value=min(default_mcc, len(unlocked_cat)),
+                step=1,
+                help="Limit how many categorical features the solver may alter.",
+            )
+            custom_constraints["max_cat_changes"] = int(mcc)
+        else:
+            st.caption("No unlocked categorical features.")
+
     if st.button(
         "Generate Optimal Recourse Plan",
         type="primary",
@@ -1146,7 +1243,7 @@ def page_recourse(dataset, pipe, config, X_train, X_test, A_test,
         _solve_and_render(
             selected_idx, applicant, current_prob, pipe, config,
             X_train, target_cls, use_fcar, dataset, sensitive_info,
-            group_cols, fcar_gcol,
+            group_cols, fcar_gcol, custom_constraints,
         )
 
 
@@ -1154,9 +1251,74 @@ def page_recourse(dataset, pipe, config, X_train, X_test, A_test,
 
 def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
                       target_cls, use_fcar, dataset, sensitive_info,
-                      group_cols, fcar_gcol=None):
+                      group_cols, fcar_gcol=None, custom_constraints=None):
     import copy
     config = copy.deepcopy(config)           # isolate from cached object
+
+    # ── Apply custom constraints from UI ──
+    cc = custom_constraints or {}
+    locked_feats = cc.get("locked", [])
+    user_max_change = cc.get("max_change", {})
+    user_max_cat = cc.get("max_cat_changes", None)
+
+    # Lock features: remove them from mutable sections
+    for feat in locked_feats:
+        if feat in config.get("mutable_numeric", {}):
+            del config["mutable_numeric"][feat]
+        if feat in config.get("mutable_categorical", {}):
+            del config["mutable_categorical"][feat]
+
+    # Apply user max-change limits on numeric features
+    for feat, max_chg in user_max_change.items():
+        if feat in config.get("mutable_numeric", {}):
+            spec = config["mutable_numeric"][feat]
+            direction = spec.get("direction", "auto")
+            if direction == "decrease":
+                spec["max_decrease"] = min(
+                    spec.get("max_decrease", max_chg), max_chg
+                )
+                spec.pop("max_rel_decrease", None)
+            elif direction == "increase":
+                spec["max_increase"] = min(
+                    spec.get("max_increase", max_chg), max_chg
+                )
+                spec.pop("max_rel_increase", None)
+            else:
+                # auto direction — cap both ways
+                spec["max_decrease"] = min(
+                    spec.get("max_decrease", max_chg), max_chg
+                )
+                spec["max_increase"] = min(
+                    spec.get("max_increase", max_chg), max_chg
+                )
+                spec.pop("max_rel_decrease", None)
+                spec.pop("max_rel_increase", None)
+
+    # Apply user max categorical changes
+    if user_max_cat is not None:
+        config["max_cat_changes"] = user_max_cat
+
+    # Show constraint banner if any user constraints are active
+    _active_cc = []
+    if locked_feats:
+        _active_cc.append(f"Locked: {', '.join(_human_feature(f) for f in locked_feats)}")
+    if user_max_change:
+        _mc = "; ".join(f"{_human_feature(f)} \u2264 {v:.1f}" for f, v in user_max_change.items())
+        _active_cc.append(f"Max change: {_mc}")
+    if user_max_cat is not None:
+        _active_cc.append(f"Max cat changes: {user_max_cat}")
+    if _active_cc:
+        st.markdown(
+            '<div style="background:rgba(99,102,241,0.08);'
+            'border:1px solid rgba(99,102,241,0.25);'
+            'border-radius:var(--radius-md);padding:12px 18px;margin:8px 0;'
+            'font-size:12px;color:#a5b4fc;line-height:1.7;">'
+            '<b>⚙ Custom Constraints Active</b><br/>'
+            + "<br/>".join(_active_cc)
+            + '</div>',
+            unsafe_allow_html=True,
+        )
+
     num_w = dict(get_numeric_cost_weights(config))
     cat_w = dict(get_categorical_step_weights(config))
     applied_overrides = False
@@ -1539,6 +1701,41 @@ def _solve_and_render(test_idx, x0, p0, pipe, config, X_train,
 
     st.markdown(narrative_html, unsafe_allow_html=True)
 
+    # ── Downloadable Recourse Report ──
+    import io as _io
+    _recourse_rows = []
+    for _c in changes:
+        _recourse_rows.append({
+            "Feature": _c["Feature"],
+            "Before": _c["Before"],
+            "After": _c["After"],
+            "Change": _c["\u0394 Amount"],
+            "Action": _c["Action"],
+            "Cost Weight": _c["Cost Weight"],
+        })
+    _df_recourse = pd.DataFrame(_recourse_rows)
+    _meta = pd.DataFrame([{
+        "Applicant": f"#{test_idx}",
+        "Dataset": dataset,
+        "Mode": "FCAR" if use_fcar else "Unconstrained AR",
+        "FCAR Group": active_group or "-",
+        "Score Before": f"{p0:.4f}",
+        "Score After": f"{p1:.4f}",
+        "Decision Flipped": "Yes" if flipped else "No",
+        "Slack": f"{slack:.4f}",
+    }])
+    _buf = _io.StringIO()
+    _buf.write("# Recourse Summary\n")
+    _meta.to_csv(_buf, index=False)
+    _buf.write("\n# Required Changes\n")
+    _df_recourse.to_csv(_buf, index=False)
+    st.download_button(
+        label="\u2b07 Download Recourse Report (CSV)",
+        data=_buf.getvalue(),
+        file_name=f"recourse_report_{dataset}_applicant{test_idx}.csv",
+        mime="text/csv",
+    )
+
     # ── AR vs FCAR side-by-side comparison (only when FCAR overrides applied) ──
     if applied_overrides and x_cf_ar is not None:
         _divider()
@@ -1731,6 +1928,54 @@ def page_audit(dataset):
             "green" if p < 0.05 else "red",
         )
 
+    # ── Downloadable Audit Report ──
+    import io
+    import pandas as pd
+    # Prepare audit metrics for CSV export
+    audit_rows = []
+    for label, d in [("Unconstrained AR", ar), ("FCAR (Auto-Tuned)", fc)]:
+        audit = d["audit"]
+        disp = d["disparity"]
+        audit_rows.append({
+            "Audit Type": label,
+            "Audit Score": audit["audit_score"],
+            "Disparity Gap": disp["gap"],
+            "Burden Ratio": disp["ratio"],
+            "Worst Group": disp.get("worst_group", "-"),
+            "Best Group": disp.get("best_group", "-"),
+            "Avg Burden": d["avg_burden"],
+            "Feasible Rate": d["feasible_rate"],
+        })
+    # Add statistical validation row
+    wil = stats.get("overall_wilcoxon", {})
+    audit_rows.append({
+        "Audit Type": "Statistical Validation",
+        "Audit Score": "-",
+        "Disparity Gap": "-",
+        "Burden Ratio": "-",
+        "Worst Group": "-",
+        "Best Group": "-",
+        "Avg Burden": wil.get("mean_diff", "-"),
+        "Feasible Rate": "-",
+        "p-value": wil.get("p_value", "-"),
+        "Significant (alpha=0.05)": wil.get("significant_at_005", "-"),
+    })
+    df_audit = pd.DataFrame(audit_rows)
+    # Reorder columns for clarity
+    cols = [
+        "Audit Type", "Audit Score", "Disparity Gap", "Burden Ratio", "Worst Group", "Best Group", "Avg Burden", "Feasible Rate", "p-value", "Significant (alpha=0.05)"
+    ]
+    for c in cols:
+        if c not in df_audit.columns:
+            df_audit[c] = "-"
+    df_audit = df_audit[cols]
+    csv = df_audit.to_csv(index=False)
+    st.download_button(
+        label="Download Audit Report (CSV)",
+        data=csv,
+        file_name=f"audit_report_{dataset}.csv",
+        mime="text/csv",
+    )
     _divider()
 
     # ── Side-by-side Audit Cards ──
@@ -1839,7 +2084,7 @@ def page_audit(dataset):
 # PAGE 3 — Evaluation Metrics
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-def page_evaluation():
+def page_evaluation(pipe=None, config=None):
     st.markdown(
         '<div class="page-title">'
         'Evaluation Metrics</div>',
@@ -1981,6 +2226,98 @@ def page_evaluation():
             st.dataframe(
                 pd.DataFrame(rows), hide_index=True, use_container_width=True,
             )
+
+    # ── Feature Importance Visualization ──
+    if pipe is not None:
+        _divider()
+        _section("bar_chart", "Feature Importance")
+        st.markdown(
+            '<div style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">'
+            'Logistic regression coefficient magnitudes (standardised) show which '
+            'features have the greatest influence on the model\'s approval decision. '
+            'Positive coefficients push toward approval; negative toward denial.</div>',
+            unsafe_allow_html=True,
+        )
+
+        try:
+            pre = pipe.named_steps["pre"]
+            clf = pipe.named_steps["clf"]
+            feat_names = list(pre.get_feature_names_out())
+            coefs = clf.coef_.ravel()
+
+            # Build readable feature name -> coefficient mapping
+            feat_coef = []
+            for fname, w in zip(feat_names, coefs):
+                # Clean up ColumnTransformer prefixes
+                readable = fname
+                if readable.startswith("num__"):
+                    readable = readable[5:]
+                elif readable.startswith("cat__"):
+                    readable = readable[5:]
+                feat_coef.append((readable, float(w)))
+
+            # Sort by absolute magnitude
+            feat_coef.sort(key=lambda x: abs(x[1]), reverse=True)
+
+            # Show top 20
+            top_n = feat_coef[:20]
+            max_abs = max(abs(c) for _, c in top_n) if top_n else 1.0
+
+            # Render as horizontal bars using HTML
+            bars_html = ""
+            for feat, coef in top_n:
+                pct = abs(coef) / max_abs * 100
+                color = "#10b981" if coef > 0 else "#f43f5e"
+                direction = "+" if coef > 0 else "\u2212"
+                label = _human_feature(feat)
+                bars_html += (
+                    '<div style="display:flex;align-items:center;gap:10px;'
+                    'padding:5px 0;border-bottom:1px solid #f1f5f9;">'
+                    f'<div style="width:180px;font-size:12px;color:var(--text-secondary);'
+                    f'text-align:right;flex-shrink:0;overflow:hidden;'
+                    f'text-overflow:ellipsis;white-space:nowrap;">{label}</div>'
+                    f'<div style="flex:1;height:10px;background:#f1f5f9;'
+                    f'border-radius:5px;overflow:hidden;">'
+                    f'<div style="width:{pct:.1f}%;height:100%;'
+                    f'background:{color};border-radius:5px;"></div></div>'
+                    f'<div style="width:70px;font-size:11px;font-weight:700;'
+                    f'color:{color};text-align:right;font-variant-numeric:tabular-nums;">'
+                    f'{direction}{abs(coef):.4f}</div>'
+                    '</div>'
+                )
+
+            # Legend
+            legend = (
+                '<div style="display:flex;gap:20px;margin-bottom:12px;font-size:12px;">'
+                '<div style="display:flex;align-items:center;gap:6px;">'
+                '<div style="width:12px;height:12px;background:#10b981;border-radius:3px;"></div>'
+                '<span style="color:var(--text-muted);">Positive (pushes toward approval)</span></div>'
+                '<div style="display:flex;align-items:center;gap:6px;">'
+                '<div style="width:12px;height:12px;background:#f43f5e;border-radius:3px;"></div>'
+                '<span style="color:var(--text-muted);">Negative (pushes toward denial)</span></div>'
+                '</div>'
+            )
+
+            st.markdown(legend, unsafe_allow_html=True)
+            st.markdown(
+                f'<div style="background:var(--bg);border:1px solid var(--border);'
+                f'border-radius:var(--radius);padding:20px 24px;">'
+                f'{bars_html}</div>',
+                unsafe_allow_html=True,
+            )
+
+            # Download coefficients
+            _df_coef = pd.DataFrame(feat_coef, columns=["Feature", "Coefficient"])
+            csv_coef = _df_coef.to_csv(index=False)
+            st.download_button(
+                label="Download Feature Coefficients (CSV)",
+                data=csv_coef,
+                file_name="feature_importance.csv",
+                mime="text/csv",
+            )
+
+        except Exception as e:
+            st.warning(f"Could not extract feature importance: {e}")
 
     _footer()
 
