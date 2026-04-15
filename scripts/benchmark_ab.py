@@ -22,6 +22,7 @@ import json
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+import copy
 import joblib
 import numpy as np
 import pandas as pd
@@ -118,7 +119,7 @@ def run_recourse_batch(
             num_w.update({k: v for k, v in weight_overrides[group_val].get("num", {}).items() if k in num_w})
             cat_w.update({k: v for k, v in weight_overrides[group_val].get("cat", {}).items() if k in cat_w})
 
-        inst_config = dict(config)
+        inst_config = copy.deepcopy(config)
         for col in num_w:
             if col in inst_config.get("mutable_numeric", {}):
                 inst_config["mutable_numeric"][col]["cost_weight"] = num_w[col]
@@ -271,6 +272,11 @@ def main(args):
     else:
         neg_ids = np.where(proba < 0.5)[0]
 
+    # Full test set sklearn predictions for correct MISOB rejection_rate(g) computation.
+    # Without this, compute_social_burden defaults rejection_rate to 1.0 and
+    # SB(g) collapses to avg_cost(g), omitting the decision disparity component.
+    y_pred_all = (proba >= 0.5).astype(int)
+
     print(f"[INFO] Dataset: {dataset_name} | Group: {group_col}")
     print(f"[INFO] Test size: {len(X_test)} | Rejected: {len(neg_ids)}")
 
@@ -301,8 +307,14 @@ def main(args):
     # ========== Metrics ==========
     print("\n===== METRICS =====")
 
-    ar_sb = compute_social_burden(ar_df, group_col=group_col, cost_col="burden_total", only_feasible=True)
-    fcar_sb = compute_social_burden(fcar_df, group_col=group_col, cost_col="burden_total", only_feasible=True)
+    ar_sb = compute_social_burden(
+        ar_df, group_col=group_col, cost_col="burden_total", only_feasible=True,
+        y_pred=y_pred_all, groups_all=A_test[group_col], positive_label=target_cls,
+    )
+    fcar_sb = compute_social_burden(
+        fcar_df, group_col=group_col, cost_col="burden_total", only_feasible=True,
+        y_pred=y_pred_all, groups_all=A_test[group_col], positive_label=target_cls,
+    )
 
     ar_disp = compute_burden_disparity(ar_sb)
     fcar_disp = compute_burden_disparity(fcar_sb)
@@ -312,11 +324,11 @@ def main(args):
 
     print("\n[Unconstrained AR - Social Burden]")
     print(ar_sb)
-    print(f"  Disparity gap: {ar_disp['gap']:.6f} | Audit score: {ar_audit['audit_score']}")
+    print(f"  Disparity gap: {ar_disp['gap']:.6f} | Ratio: {ar_disp['ratio']:.3f} | Audit score: {ar_audit['audit_score']}")
 
     print("\n[FCAR - Social Burden]")
     print(fcar_sb)
-    print(f"  Disparity gap: {fcar_disp['gap']:.6f} | Audit score: {fcar_audit['audit_score']}")
+    print(f"  Disparity gap: {fcar_disp['gap']:.6f} | Ratio: {fcar_disp['ratio']:.3f} | Audit score: {fcar_audit['audit_score']}")
 
     # ========== Statistical Tests ==========
     print("\n===== STATISTICAL TESTS =====")
@@ -332,6 +344,7 @@ def main(args):
         dr = stat_results["disparity_reduction"]
         print(f"  AR gap: {dr['ar_burden_gap']:.6f} | FCAR gap: {dr['fcar_burden_gap']:.6f}")
         print(f"  Gap reduction: {dr['gap_reduction']:.6f} ({dr['gap_reduction_pct']:.1f}%)")
+    print(f"  AR ratio: {ar_disp['ratio']:.3f} | FCAR ratio: {fcar_disp['ratio']:.3f}")
 
     # ========== Save ==========
     out_dir = ART / "reports" / "benchmarks"
@@ -364,6 +377,10 @@ def main(args):
             "audit": fcar_audit,
         },
         "statistical_tests": stat_results,
+        "ratio_comparison": {
+            "ar_burden_ratio": round(float(ar_disp["ratio"]), 4) if not np.isinf(ar_disp.get("ratio", np.inf)) else None,
+            "fcar_burden_ratio": round(float(fcar_disp["ratio"]), 4) if not np.isinf(fcar_disp.get("ratio", np.inf)) else None,
+        },
     }
 
     json_path = out_dir / f"{dataset_name}_{group_col}_ab_summary.json"
@@ -407,6 +424,9 @@ def _quick_auto_tune(pipe, X_train, X_test, A_test, neg_ids, proba, config, grou
     
     num_ranges = {c: max(float(X_train[c].max() - X_train[c].min()), 1e-9) for c in mutable_num_cols}
 
+    target_cls_qt = int(config.get("label_positive", 1))
+    y_pred_tune = (proba >= 0.5).astype(int)
+
     for it in range(max_iters):
         print(f"  [auto-tune iter {it}]")
 
@@ -416,7 +436,10 @@ def _quick_auto_tune(pipe, X_train, X_test, A_test, neg_ids, proba, config, grou
             limit=limit, seed=seed,
         )
 
-        sb = compute_social_burden(df, group_col=group_col, cost_col="burden_total", only_feasible=True)
+        sb = compute_social_burden(
+            df, group_col=group_col, cost_col="burden_total", only_feasible=True,
+            y_pred=y_pred_tune, groups_all=A_test[group_col], positive_label=target_cls_qt,
+        )
         disp = compute_burden_disparity(sb)
 
         worst = disp.get("worst_group", "")

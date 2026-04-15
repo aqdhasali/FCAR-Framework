@@ -19,6 +19,7 @@ from typing import Optional
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
+import copy
 import json
 import time
 import numpy as np
@@ -259,7 +260,7 @@ def generate_recourse(req: RecourseRequest):
                     cat_w.update({k: float(v) for k, v in overrides[gval].get("cat", {}).items()})
                     fcar_group_label = f"{gcol}={gval}"
 
-    inst_config = dict(config)
+    inst_config = copy.deepcopy(config)
     for col in num_w:
         if col in inst_config.get("mutable_numeric", {}):
             inst_config["mutable_numeric"][col]["cost_weight"] = num_w[col]

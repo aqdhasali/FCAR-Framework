@@ -91,6 +91,7 @@ def compute_social_burden(
     y_pred: np.ndarray = None,
     groups_all: pd.Series = None,
     only_feasible: bool = True,
+    positive_label: int = 1,
 ) -> pd.DataFrame:
     """
     Compute per-group Social Burden: SB(g) = rejection_rate(g) × avg_cost(g).
@@ -130,7 +131,7 @@ def compute_social_burden(
 
     # Rejection rate per group
     if y_pred is not None and groups_all is not None:
-        rej_rate = compute_rejection_rate(y_pred, groups_all)
+        rej_rate = compute_rejection_rate(y_pred, groups_all, positive_label=positive_label)
     else:
         # Fallback: estimate from recourse_df (all rows are rejected)
         # Use count per group / total to weight, but rate is effectively 1.0

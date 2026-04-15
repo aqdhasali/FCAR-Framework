@@ -6,6 +6,7 @@ import argparse
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+import copy
 import joblib
 import numpy as np
 import pandas as pd
@@ -199,7 +200,7 @@ def main(args):
             cat_w.update({k: v for k, v in overrides[group_val]["cat"].items() if k in cat_w})
 
         # Inject modified weights into config dictionary for the solver
-        inst_config = dict(config)
+        inst_config = copy.deepcopy(config)
         for col in num_w:
             inst_config["mutable_numeric"][col]["cost_weight"] = num_w[col]
         for col in cat_w:

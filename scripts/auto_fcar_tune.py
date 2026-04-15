@@ -11,6 +11,7 @@ from pathlib import Path
 import time
 import argparse
 
+import copy
 import joblib
 import numpy as np
 import pandas as pd
@@ -92,7 +93,7 @@ def run_one_iteration(
             num_w.update(overrides[group_val].get("num", {}))
             cat_w.update(overrides[group_val].get("cat", {}))
 
-        inst_config = dict(config)
+        inst_config = copy.deepcopy(config)
         for col in num_w:
             inst_config["mutable_numeric"][col]["cost_weight"] = num_w[col]
         for col in cat_w:
@@ -211,6 +212,15 @@ def main():
     out_dir = ART / "reports"
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # Pre-compute full test set predictions and group labels so that
+    # compute_social_burden uses the true rejection_rate(g) = rejected / total(g)
+    # rather than defaulting to 1.0 (which reduces SB to avg_cost only).
+    sklearn_pred = (proba >= 0.5).astype(int)  # 1 = class 1, 0 = class 0
+    groups_all_series = (
+        A_test[args.group_col] if args.group_col in A_test.columns
+        else pd.Series(dtype=str)
+    )
+
     history = []
 
     for it in range(args.max_iters):
@@ -247,7 +257,12 @@ def main():
         
         # Calculate Social Burden safely
         try:
-            sb_df = compute_social_burden(df, group_col=args.group_col, cost_col="burden_total", only_feasible=True)
+            sb_df = compute_social_burden(
+                df, group_col=args.group_col, cost_col="burden_total", only_feasible=True,
+                y_pred=sklearn_pred if len(groups_all_series) > 0 else None,
+                groups_all=groups_all_series if len(groups_all_series) > 0 else None,
+                positive_label=target_cls,
+            )
             print("\n[SOCIAL BURDEN] (sorted val desc)")
             print(sb_df)
             

@@ -6,6 +6,7 @@ from pyomo.environ import (
     Objective, ConstraintList, minimize, value
 )
 from pyomo.contrib.appsi.solvers.highs import Highs
+from pyomo.contrib.appsi.base import TerminationCondition
 
 # Monotonic "improvement" orderings
 CHECKING_ORDER = ["A11", "A12", "A13", "A14"]
@@ -45,23 +46,42 @@ def _extract_numeric_beta(pipe):
 
 
 def _extract_cat_weights(pipe, mutable_cat_cols):
-    """w_cat[col][cat] = coefficient for onehot(col=cat)."""
+    """w_cat[col][cat] = coefficient for onehot(col=cat).
+
+    Uses the encoder's own category list rather than string-splitting feature
+    names to avoid breakage on column/category names that contain underscores.
+    """
     pre = pipe.named_steps["pre"]
     clf = pipe.named_steps["clf"]
 
     feat_names = pre.get_feature_names_out()
     w = clf.coef_.ravel()
+    coef = dict(zip(feat_names, w))
+
+    cat_pipe = pre.named_transformers_["cat"]
+    enc = cat_pipe.named_steps["onehot"]
+    all_cat_cols = list(pre.transformers_[1][2])
+
+    def _normalize(name: str) -> str:
+        return name.replace("-", "_").replace(" ", "_").lower()
+
+    sklearn_to_config: dict[str, str] = {}
+    for sklearn_col in all_cat_cols:
+        for config_col in mutable_cat_cols:
+            if sklearn_col == config_col or _normalize(sklearn_col) == _normalize(config_col):
+                sklearn_to_config[sklearn_col] = config_col
+                break
 
     w_cat = {c: {} for c in mutable_cat_cols}
-    for fname, wi in zip(feat_names, w):
-        if not fname.startswith("cat__"):
+    for j, sklearn_col in enumerate(all_cat_cols):
+        config_col = sklearn_to_config.get(sklearn_col)
+        if config_col is None:
             continue
-        rest = fname[len("cat__"):]
-        if "_" not in rest:
-            continue
-        col, cat = rest.rsplit("_", 1)
-        if col in w_cat:
-            w_cat[col][cat] = float(wi)
+        for cat in enc.categories_[j]:
+            cat_str = str(cat)
+            fname = f"cat__{sklearn_col}_{cat_str}"
+            if fname in coef:
+                w_cat[config_col][cat_str] = float(coef[fname])
     return w_cat
 
 
@@ -240,18 +260,24 @@ def solve_german_recourse_mip(
     )
 
     solver = Highs()
-    solver.solve(m)
+    results = solver.solve(m)
+    tc = results.termination_condition
+    if tc not in (TerminationCondition.optimal, TerminationCondition.maxTimeLimit):
+        return x0.copy(), float("inf")
 
     # build counterfactual
     x_cf = x0.copy()
+    try:
+        for c in mutable_num_cols:
+            x_cf[c] = float(value(m.x[c]))
 
-    for c in mutable_num_cols:
-        x_cf[c] = float(value(m.x[c]))
+        for col in mutable_cat_cols:
+            cats = cat_categories[col]
+            best_cat = max(cats, key=lambda cat: float(value(m.g[(col, cat)])))
+            x_cf[col] = best_cat
 
-    for col in mutable_cat_cols:
-        cats = cat_categories[col]
-        best_cat = max(cats, key=lambda cat: float(value(m.g[(col, cat)])))
-        x_cf[col] = best_cat
+        slack = float(value(m.s))
+    except Exception:
+        return x0.copy(), float("inf")
 
-    slack = float(value(m.s))
     return x_cf, slack
